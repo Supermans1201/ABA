@@ -1,0 +1,586 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pygitthub.ProcessingCorpus &mdash; CodeDoc 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CodeDoc 1.0 文档" href="../../index.html"/>
+        <link rel="up" title="模块代码" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> CodeDoc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="simple">
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CodeDoc</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">模块代码</a> &raquo;</li>
+        
+      <li>pygitthub.ProcessingCorpus</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>pygitthub.ProcessingCorpus 源代码</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python</span>
+<span class="c"># -*- coding: UTF-8 -*-</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">gensim.models</span> <span class="kn">import</span> <span class="n">word2vec</span>
+<span class="kn">import</span> <span class="nn">gensim.corpora</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pygitthub.GithubRepo</span> <span class="kn">import</span> <span class="n">GithubRepo</span>
+
+
+<div class="viewcode-block" id="ProcessingCorpus"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.ProcessingCorpus.ProcessingCorpus">[文档]</a><span class="k">class</span> <span class="nc">ProcessingCorpus</span><span class="p">:</span>
+    <span class="s">&#39;处理语料&#39;</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="s">&quot;codinguser&quot;</span><span class="p">,</span> <span class="n">repo</span><span class="o">=</span><span class="s">&quot;gnucash-android&quot;</span><span class="p">):</span>
+        <span class="s">&#39;初始化，其中 notes 表示注释，thedata 表示数据&#39;</span>
+        <span class="n">ProcessingCorpus</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span> <span class="o">=</span> <span class="n">GithubRepo</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">repo</span><span class="o">=</span><span class="n">repo</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isnotejava</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isnotexml</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">notes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;All&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thedata</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+
+<div class="viewcode-block" id="ProcessingCorpus.gendiffpredealtxt"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.ProcessingCorpus.ProcessingCorpus.gendiffpredealtxt">[文档]</a>    <span class="k">def</span> <span class="nf">gendiffpredealtxt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&quot;all&quot;</span><span class="p">,</span> <span class="n">stragy</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="s">&#39;预处理&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;预处理...&quot;</span>
+        <span class="c"># 类型</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
+        <span class="c"># 确定源文件和目标问题</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;All&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;all&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是所有...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffpredealfilepath</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">difffilepath</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;Java&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;java&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是Java...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffpredealjavafilepath</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffjavafilepath</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;Xml&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;xml&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是Xml...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffpredealxmlfilepath</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffxmlfilepath</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span><span class="p">,</span> <span class="s">&quot;-&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span>
+        <span class="c"># 如果预期文件存在，则覆盖</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">difftextpredealfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">)</span>
+        <span class="c"># 如果源文件存在，则进行处理</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span><span class="p">):</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">while</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;/\*&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">isnotejava</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;//&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> \
+                        <span class="ow">and</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;http://&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;https://&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span>
+                                                                                   <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;file://&quot;</span><span class="p">,</span>
+                                                                                                           <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                    <span class="n">temp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;//&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span>
+                    <span class="n">temps</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+                    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">temp</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                        <span class="n">temps</span> <span class="o">+=</span> <span class="n">s</span>
+                    <span class="c"># print &quot;[&quot;,line,&quot;-&gt;&quot;,temps,&quot;]&quot;</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">temps</span>
+                    <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;&lt;!--&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">isnotexml</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="c"># print line</span>
+                    <span class="k">pass</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isnotejava</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">isnotexml</span><span class="p">:</span>
+                    <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">notes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">stragy</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">newline</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&lt;&quot;</span><span class="p">,</span> <span class="s">&quot; &lt; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s">&quot; &gt; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;{&quot;</span><span class="p">,</span> <span class="s">&quot; { &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;}&quot;</span><span class="p">,</span> <span class="s">&quot; } &quot;</span><span class="p">)</span> \
+                            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">,</span> <span class="s">&quot; , &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;!&quot;</span><span class="p">,</span> <span class="s">&quot; ! &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;+&quot;</span><span class="p">,</span> <span class="s">&quot;+ &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="p">,</span> <span class="s">&quot;- &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">&quot;</span><span class="p">,</span>
+                                                                                                                   <span class="s">&quot; </span><span class="se">\&quot;</span><span class="s"> &quot;</span><span class="p">)</span> \
+                            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;(&quot;</span><span class="p">,</span> <span class="s">&quot; ( &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;)&quot;</span><span class="p">,</span> <span class="s">&quot; ) &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;;&quot;</span><span class="p">,</span> <span class="s">&quot; ; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;=&quot;</span><span class="p">,</span>
+                                                                                                 <span class="s">&quot; = &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                            <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;\s&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span> \
+                            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;   &quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;  &quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;|&quot;</span><span class="p">,</span> <span class="s">&quot; | &quot;</span><span class="p">)</span><span class="o">.</span> \
+                            <span class="n">replace</span><span class="p">(</span><span class="s">&quot;= =&quot;</span><span class="p">,</span> <span class="s">&quot;==&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                            <span class="s">&quot;! =&quot;</span><span class="p">,</span> <span class="s">&quot;!=&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;!  =&quot;</span><span class="p">,</span> <span class="s">&quot;!=&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&lt; =&quot;</span><span class="p">,</span> <span class="s">&quot;&lt;=&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&gt; =&quot;</span><span class="p">,</span> <span class="s">&quot;&gt;=&quot;</span><span class="p">)</span> \
+                            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;{ }&quot;</span><span class="p">,</span> <span class="s">&quot;{}&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;{  }&quot;</span><span class="p">,</span> <span class="s">&quot;{}&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;( )&quot;</span><span class="p">,</span> <span class="s">&quot;()&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;(  )&quot;</span><span class="p">,</span>
+                                                                                                     <span class="s">&quot;()&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                            <span class="s">&quot;* =&quot;</span><span class="p">,</span> <span class="s">&quot;*=&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;+ =&quot;</span><span class="p">,</span> <span class="s">&quot;+=&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;- =&quot;</span><span class="p">,</span> <span class="s">&quot;-=&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">,</span> <span class="s">&quot;. &quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">stragy</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">newline</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&lt;&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;}&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span> \
+                            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;!&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;+&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span> \
+                            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;(&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;)&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;;&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;=&quot;</span><span class="p">,</span>
+                                                                                                              <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                            <span class="s">&quot;@+&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;@&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span> \
+                            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;\s&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;   &quot;</span><span class="p">,</span>
+                                                                                                               <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                            <span class="s">&quot;  &quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span> \
+                            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;{&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;}&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;(&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;)&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                            <span class="s">&quot;||&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&amp;&amp;&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">newline</span> <span class="o">==</span> <span class="s">&quot; &quot;</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">difftextpredealfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">newline</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;\*/&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">isnotejava</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;--&gt;&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">isnotexml</span> <span class="o">=</span> <span class="bp">False</span>
+                    <span class="c"># print self.notes</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">difftextpredealfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">print</span> <span class="s">&quot;处理了&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;代码，&quot;</span><span class="p">,</span> <span class="s">&quot;注释&quot;</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="s">&quot;行&quot;</span>
+</div>
+<div class="viewcode-block" id="ProcessingCorpus.gendiffpicture"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.ProcessingCorpus.ProcessingCorpus.gendiffpicture">[文档]</a>    <span class="k">def</span> <span class="nf">gendiffpicture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="o">=</span><span class="s">&quot;activity&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&quot;all&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="s">&#39;生成词向量模型和diff的图片&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;生成词向量模型&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;All&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;all&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是所有...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffmodelfilepath</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;Java&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;java&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是Java...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffmodeljavafilepath</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;Xml&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;xml&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是Xml...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffmodelxmlfilepath</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(asctime)s</span><span class="s"> : </span><span class="si">%(levelname)s</span><span class="s"> : </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">Word2Vec</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span><span class="p">)</span>
+
+        <span class="kn">import</span> <span class="nn">networkx</span> <span class="kn">as</span> <span class="nn">nx</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+        <span class="kn">from</span> <span class="nn">pylab</span> <span class="kn">import</span> <span class="n">mpl</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+        <span class="n">blacknode</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+
+        <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">startwordlist</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">startwordlist</span><span class="p">:</span>
+                <span class="n">y2</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">most_similar</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>  <span class="c"># 20个最相关的</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">y2</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">blacknode</span><span class="p">:</span>
+                        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="n">G</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="n">G</span><span class="o">.</span><span class="n">add_weighted_edges_from</span><span class="p">([(</span><span class="n">word</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span>
+                <span class="n">blacknode</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="n">start</span> <span class="o">=</span> <span class="p">[</span><span class="n">word</span><span class="p">]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">size</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">get</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+            <span class="k">print</span> <span class="n">result</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+            <span class="k">print</span> <span class="n">node</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">spring_layout</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+        <span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s">&quot;r&quot;</span><span class="p">,</span> <span class="n">with_labels</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="mi">900</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="ProcessingCorpus.genmodel"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.ProcessingCorpus.ProcessingCorpus.genmodel">[文档]</a>    <span class="k">def</span> <span class="nf">genmodel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&quot;all&quot;</span><span class="p">):</span>
+        <span class="s">&#39;生成词向量模型&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;生成词向量模型&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;All&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;all&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是所有...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffmodelfilepath</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffpredealfilepath</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;Java&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;java&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是Java...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffmodeljavafilepath</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffpredealjavafilepath</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;Xml&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;xml&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是Xml...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffmodelxmlfilepath</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffpredealxmlfilepath</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span><span class="p">,</span> <span class="s">&quot;-&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(asctime)s</span><span class="s"> : </span><span class="si">%(levelname)s</span><span class="s"> : </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+        <span class="n">sentences</span> <span class="o">=</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">Text8Corpus</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span><span class="p">)</span>  <span class="c"># 加载语料</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">Word2Vec</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>  <span class="c"># 训练skip-gram模型; 默认window=5</span>
+        <span class="c"># 保存模型，以便重用</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ProcessingCorpus.gendirectory"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.ProcessingCorpus.ProcessingCorpus.gendirectory">[文档]</a>    <span class="k">def</span> <span class="nf">gendirectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&quot;all&quot;</span><span class="p">):</span>
+        <span class="s">&#39;生成字典&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;生成字典&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;All&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;all&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是所有...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">directoryfilepath</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffpredealfilepath</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;Java&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;java&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是Java...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">directoryjavafilepath</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffpredealjavafilepath</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;Xml&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;xml&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是Xml...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">directoryxmlfilepath</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffpredealxmlfilepath</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span><span class="p">,</span> <span class="s">&quot;-&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(asctime)s</span><span class="s"> : </span><span class="si">%(levelname)s</span><span class="s"> : </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+        <span class="n">sentences</span> <span class="o">=</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">Text8Corpus</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span><span class="p">)</span>  <span class="c"># 加载语料</span>
+        <span class="n">dictionary</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">corpora</span><span class="o">.</span><span class="n">Dictionary</span><span class="p">(</span><span class="n">sentences</span><span class="p">)</span>
+        <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">dictionary</span><span class="p">)</span>
+        <span class="n">dictionary</span><span class="o">.</span><span class="n">save_as_text</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span><span class="p">,</span> <span class="n">sort_by_word</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ProcessingCorpus.gendiffsanitizationtxt"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.ProcessingCorpus.ProcessingCorpus.gendiffsanitizationtxt">[文档]</a>    <span class="k">def</span> <span class="nf">gendiffsanitizationtxt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&quot;all&quot;</span><span class="p">):</span>
+        <span class="s">&#39;过滤出合适的语料&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;过滤出合适的语料...&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;All&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;all&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是所有...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">difffilepath</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;Java&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;java&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是Java...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffjavafilepath</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;Xml&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;xml&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是Xml...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffxmlfilepath</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">difftextfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffdirpath</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span><span class="p">,</span> <span class="s">&quot;-&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">targetfilename</span>
+
+        <span class="n">list_dirs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffdirpath</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">list_dirs</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">print</span> <span class="s">&quot;处理第&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;个&quot;</span><span class="p">,</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">getcodedifffromtxt</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">print</span> <span class="s">&quot;共处理&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;个文件&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">difftextfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="ProcessingCorpus.getcodedifffromtxt"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.ProcessingCorpus.ProcessingCorpus.getcodedifffromtxt">[文档]</a>    <span class="k">def</span> <span class="nf">getcodedifffromtxt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span>
+        <span class="s">&#39;从文本中获取代码的不同&#39;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">thedata</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">print</span> <span class="s">&quot;正在处理...:&quot;</span><span class="p">,</span> <span class="n">filepath</span>
+        <span class="k">while</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;Subject&quot;</span><span class="p">):</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">if</span> <span class="s">&quot;---</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">==</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;diff&quot;</span><span class="p">):</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="n">fn</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="c"># print fn</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">fn</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="n">fn</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">2</span><span class="p">:]:</span>
+                        <span class="n">ft</span> <span class="o">=</span> <span class="n">fn</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
+                        <span class="c"># print ft</span>
+                        <span class="k">for</span> <span class="n">td</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">thedata</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">td</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;.../&quot;</span><span class="p">):</span>
+                                <span class="n">tt</span> <span class="o">=</span> <span class="n">td</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">4</span><span class="p">:]</span>
+                                <span class="k">if</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">tt</span><span class="p">):</span>
+                                    <span class="n">td</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ft</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;all&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;All&quot;</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.jar&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.so&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.aar&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
+                                    <span class="s">&quot;png&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;jpg&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.keystore&quot;</span><span class="p">)</span> \
+                                    <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.zip&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.rar&quot;</span><span class="p">)</span> \
+                                    <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.md&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.txt&quot;</span><span class="p">)</span> \
+                                    <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.bat&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.classpath&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.project&quot;</span><span class="p">)</span> \
+                                    <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.gitignore&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;pro&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.properties&quot;</span><span class="p">)</span> \
+                                    <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;yml&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;gradlew&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
+                                <span class="s">&quot;.sh&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.gnucash&quot;</span><span class="p">)</span> \
+                                    <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;CONTRIBUTORS&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;yaml&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;LICENSE&quot;</span><span class="p">):</span>
+                                <span class="n">start</span> <span class="o">=</span> <span class="bp">True</span>
+                            <span class="k">elif</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.java&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.xml&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.gradle&quot;</span><span class="p">):</span>
+                                <span class="k">pass</span>
+                                <span class="k">print</span> <span class="n">ft</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">print</span> <span class="n">ft</span>
+                                <span class="kn">import</span> <span class="nn">time</span>
+                                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;java&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;Java&quot;</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="ow">not</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.java&quot;</span><span class="p">):</span>
+                                <span class="n">start</span> <span class="o">=</span> <span class="bp">True</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">print</span> <span class="n">ft</span>
+                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;xml&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;Xml&quot;</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="ow">not</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.xml&quot;</span><span class="p">):</span>
+                                <span class="n">start</span> <span class="o">=</span> <span class="bp">True</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">print</span> <span class="n">ft</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">print</span> <span class="s">&quot;except&quot;</span>
+                    <span class="kn">import</span> <span class="nn">time</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+                <span class="n">newline</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;, &quot;</span><span class="p">,</span> <span class="s">&quot;,&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;}&quot;</span><span class="p">,</span> <span class="s">&quot; } &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;;&quot;</span><span class="p">,</span> <span class="s">&quot; ; &quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;+++&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;---&quot;</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;diff&quot;</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;similarity index&quot;</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;From&quot;</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;Date:&quot;</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;new file mode&quot;</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;deleted file mode&quot;</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;rename from&quot;</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;rename to&quot;</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;index&quot;</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;\ No newline at end of file&quot;</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;@@(\s*)(\-[0-9]+,[0-9]+)(\s)*(\+[0-9]+,[0-9]+)(\s*)@@&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                    <span class="n">df</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;@@&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">df</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">difftextfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">difftextfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">newline</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;(\s*)</span><span class="se">\\</span><span class="s">|(\s* )([0-9]+)(\+*\-*)&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                    <span class="n">temp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">|&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;+&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">thedata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="ProcessingCorpus.getsmailarword"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.ProcessingCorpus.ProcessingCorpus.getsmailarword">[文档]</a>    <span class="k">def</span> <span class="nf">getsmailarword</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="o">=</span><span class="s">&quot;activity&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&quot;all&quot;</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="s">&#39;获得相似单词&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;获得相似单词&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;All&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;all&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是所有...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffmodelfilepath</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;Java&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;java&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是Java...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffmodeljavafilepath</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;Xml&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;xml&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;类型是Xml...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffmodelxmlfilepath</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(asctime)s</span><span class="s"> : </span><span class="si">%(levelname)s</span><span class="s"> : </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">Word2Vec</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sourcefilename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">most_similar</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="n">number</span><span class="p">)</span>  <span class="c"># 20个最相关的</span></div></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; 版权所有 2017, lm1201.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

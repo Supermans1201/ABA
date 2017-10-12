@@ -1,0 +1,38 @@
+pygitthub.AnalysisScript package
+================================
+
+Submodules
+----------
+
+pygitthub.AnalysisScript.Script_num1 module
+-------------------------------------------
+
+.. automodule:: pygitthub.AnalysisScript.Script_num1
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.AnalysisScript.Script_num2 module
+-------------------------------------------
+
+.. automodule:: pygitthub.AnalysisScript.Script_num2
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.AnalysisScript.Script_num3 module
+-------------------------------------------
+
+.. automodule:: pygitthub.AnalysisScript.Script_num3
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pygitthub.AnalysisScript
+    :members:
+    :undoc-members:
+    :show-inheritance:

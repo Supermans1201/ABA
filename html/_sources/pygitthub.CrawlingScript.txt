@@ -1,0 +1,62 @@
+pygitthub.CrawlingScript package
+================================
+
+Submodules
+----------
+
+pygitthub.CrawlingScript.Crawling_num1 module
+---------------------------------------------
+
+.. automodule:: pygitthub.CrawlingScript.Crawling_num1
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.CrawlingScript.Crawling_num2 module
+---------------------------------------------
+
+.. automodule:: pygitthub.CrawlingScript.Crawling_num2
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.CrawlingScript.Crawling_num3 module
+---------------------------------------------
+
+.. automodule:: pygitthub.CrawlingScript.Crawling_num3
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.CrawlingScript.Crawling_num4 module
+---------------------------------------------
+
+.. automodule:: pygitthub.CrawlingScript.Crawling_num4
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.CrawlingScript.Crawling_num5 module
+---------------------------------------------
+
+.. automodule:: pygitthub.CrawlingScript.Crawling_num5
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.CrawlingScript.Crawling_num6 module
+---------------------------------------------
+
+.. automodule:: pygitthub.CrawlingScript.Crawling_num6
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pygitthub.CrawlingScript
+    :members:
+    :undoc-members:
+    :show-inheritance:

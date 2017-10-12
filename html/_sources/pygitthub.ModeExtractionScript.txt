@@ -1,0 +1,22 @@
+pygitthub.ModeExtractionScript package
+======================================
+
+Submodules
+----------
+
+pygitthub.ModeExtractionScript.Script_num1 module
+-------------------------------------------------
+
+.. automodule:: pygitthub.ModeExtractionScript.Script_num1
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pygitthub.ModeExtractionScript
+    :members:
+    :undoc-members:
+    :show-inheritance:

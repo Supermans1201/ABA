@@ -1,0 +1,78 @@
+pygitthub.IntercationMongoScript package
+========================================
+
+Submodules
+----------
+
+pygitthub.IntercationMongoScript.Script_num1 module
+---------------------------------------------------
+
+.. automodule:: pygitthub.IntercationMongoScript.Script_num1
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.IntercationMongoScript.Script_num2 module
+---------------------------------------------------
+
+.. automodule:: pygitthub.IntercationMongoScript.Script_num2
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.IntercationMongoScript.Script_num3 module
+---------------------------------------------------
+
+.. automodule:: pygitthub.IntercationMongoScript.Script_num3
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.IntercationMongoScript.Script_num4 module
+---------------------------------------------------
+
+.. automodule:: pygitthub.IntercationMongoScript.Script_num4
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.IntercationMongoScript.Script_num5 module
+---------------------------------------------------
+
+.. automodule:: pygitthub.IntercationMongoScript.Script_num5
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.IntercationMongoScript.Script_num6 module
+---------------------------------------------------
+
+.. automodule:: pygitthub.IntercationMongoScript.Script_num6
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.IntercationMongoScript.Script_num7 module
+---------------------------------------------------
+
+.. automodule:: pygitthub.IntercationMongoScript.Script_num7
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.IntercationMongoScript.Script_num8 module
+---------------------------------------------------
+
+.. automodule:: pygitthub.IntercationMongoScript.Script_num8
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pygitthub.IntercationMongoScript
+    :members:
+    :undoc-members:
+    :show-inheritance:

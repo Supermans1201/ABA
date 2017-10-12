@@ -1,0 +1,561 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pygitthub.InteractionMongo &mdash; CodeDoc 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CodeDoc 1.0 文档" href="../../index.html"/>
+        <link rel="up" title="模块代码" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> CodeDoc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="simple">
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CodeDoc</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">模块代码</a> &raquo;</li>
+        
+      <li>pygitthub.InteractionMongo</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>pygitthub.InteractionMongo 源代码</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python</span>
+<span class="c"># -*- coding: UTF-8 -*-</span>
+<span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">MongoClient</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">pygitthub.GithubRepo</span> <span class="kn">import</span> <span class="n">GithubRepo</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+
+<div class="viewcode-block" id="InteractionMongo"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.InteractionMongo.InteractionMongo">[文档]</a><span class="k">class</span> <span class="nc">InteractionMongo</span><span class="p">:</span>
+    <span class="s">&#39;从数据库中读取信息，因为数据库中信息是全面的，而我们只需要一部分&#39;</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="s">&quot;codinguser&quot;</span><span class="p">,</span> <span class="n">repo</span><span class="o">=</span><span class="s">&quot;gnucash-android&quot;</span><span class="p">):</span>
+        <span class="s">&#39;初始化&#39;</span>
+        <span class="n">InteractionMongo</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span> <span class="o">=</span> <span class="n">GithubRepo</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">repo</span><span class="o">=</span><span class="n">repo</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newcommitsdata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newcomentsdata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newissuesdata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newdiffinfodata</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="InteractionMongo.dealdiffinfo"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.InteractionMongo.InteractionMongo.dealdiffinfo">[文档]</a>    <span class="k">def</span> <span class="nf">dealdiffinfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;处理iffinfo信息&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newdiffinfodata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffinfocoll</span><span class="o">.</span><span class="n">find</span><span class="p">():</span>
+            <span class="k">print</span> <span class="n">data</span>
+</div>
+<div class="viewcode-block" id="InteractionMongo.dealcommits"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.InteractionMongo.InteractionMongo.dealcommits">[文档]</a>    <span class="k">def</span> <span class="nf">dealcommits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;处理commits信息&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newcommitsdata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">commitscoll</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">commitscoll</span><span class="o">.</span><span class="n">find</span><span class="p">():</span>
+            <span class="c"># print data</span>
+            <span class="c"># print type(data)</span>
+            <span class="n">sha</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="n">stats</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="n">deletions</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="n">additions</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c"># print k,v</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;sha&quot;</span><span class="p">:</span>
+                    <span class="n">sha</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;stats&quot;</span><span class="p">:</span>
+                    <span class="n">deletions</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="s">&quot;deletions&quot;</span><span class="p">]</span>
+                    <span class="n">additions</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="s">&quot;additions&quot;</span><span class="p">]</span>
+                    <span class="n">total</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="s">&quot;total&quot;</span><span class="p">]</span>
+                    <span class="c"># print temp</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;files&quot;</span><span class="p">:</span>
+                    <span class="c"># print v</span>
+                    <span class="c"># print type(v)</span>
+                    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">([]):</span>
+                        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                            <span class="n">ftup</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s">&quot;filename&quot;</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="s">&quot;deletions&quot;</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="s">&quot;additions&quot;</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="s">&quot;changes&quot;</span><span class="p">])</span>
+                            <span class="c"># print ftup</span>
+                            <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ftup</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">sha</span><span class="p">,</span> <span class="n">deletions</span><span class="p">,</span> <span class="n">additions</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">files</span><span class="p">))</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="n">key</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">newcommitsdata</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">newcommitsdata</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">newcommitsdata</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="ow">in</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">newcommitsdata</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]]):</span>
+                <span class="c"># print &quot;*&quot;,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">newcommitsdata</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">newcommitsdata</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">newcommitsdata</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">newcommitsdata</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">newcommitsdata</span><span class="p">[</span><span class="s">&quot;995081989302e71a246c2eb53e9c915df92cbc9a&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">commitsinfocoll</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">newcommitsdata</span><span class="p">)</span>
+
+        <span class="c"># print self.newcommitsdata[&#39;667&#39;]</span>
+</div>
+<div class="viewcode-block" id="InteractionMongo.dealcomments"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.InteractionMongo.InteractionMongo.dealcomments">[文档]</a>    <span class="k">def</span> <span class="nf">dealcomments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;处理comment信息&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newcomentsdata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">commentsoll</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">commentsoll</span><span class="o">.</span><span class="n">find</span><span class="p">():</span>
+            <span class="c"># print data</span>
+            <span class="c"># print type(data)</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="n">number</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c"># print k,v</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;issue&quot;</span><span class="p">:</span>
+                    <span class="n">number</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;body&quot;</span><span class="p">:</span>
+                    <span class="n">temp</span> <span class="o">=</span> <span class="n">v</span>
+                    <span class="c"># print temp</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">number</span><span class="p">,</span> <span class="n">temp</span><span class="p">))</span>
+        <span class="k">print</span> <span class="n">result</span>
+        <span class="c"># for data in result:</span>
+        <span class="c">#     print data[0],data[1]</span>
+        <span class="c">#</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="n">key</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">newcomentsdata</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">newcomentsdata</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]]:</span>
+                <span class="c"># print &quot;*&quot;,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">newcomentsdata</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">newcomentsdata</span><span class="p">[</span><span class="s">&#39;667&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">commentsinfocoll</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">newcomentsdata</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="InteractionMongo.dealissues"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.InteractionMongo.InteractionMongo.dealissues">[文档]</a>    <span class="k">def</span> <span class="nf">dealissues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;处理issue信息&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newissuesdata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issuescoll</span><span class="o">.</span><span class="n">find_one</span><span class="p">()</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issuescoll</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issuescoll</span><span class="o">.</span><span class="n">find</span><span class="p">():</span>
+            <span class="c"># print data</span>
+            <span class="c"># print type(data)</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">number</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="n">body</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="n">pullrequest</span> <span class="o">=</span> <span class="s">&quot;False&quot;</span>
+
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c"># print k,v</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;number&quot;</span><span class="p">:</span>
+                    <span class="n">number</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;title&quot;</span><span class="p">:</span>
+                    <span class="n">title</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;body&quot;</span><span class="p">:</span>
+                    <span class="n">body</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;labels&quot;</span><span class="p">:</span>
+                    <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">vv</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                        <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vv</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;state&quot;</span><span class="p">:</span>
+                    <span class="n">state</span> <span class="o">=</span> <span class="n">v</span>
+
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;pull_request&quot;</span><span class="p">:</span>
+                    <span class="n">pullrequest</span> <span class="o">=</span> <span class="s">&quot;True&quot;</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">print</span> <span class="n">i</span>
+                    <span class="k">print</span> <span class="n">pullrequest</span>
+                    <span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s">&quot;patch_url&quot;</span><span class="p">])</span>
+                    <span class="k">print</span> <span class="n">v</span><span class="p">[</span><span class="s">&quot;patch_url&quot;</span><span class="p">]</span>
+                    <span class="n">pullrequest</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="s">&quot;patch_url&quot;</span><span class="p">]</span>
+                    <span class="c"># r = requests.get(url=v[&quot;patch_url&quot;], headers=self.headers, verify=False)</span>
+                    <span class="c">#</span>
+                    <span class="c"># pullrequest= r.text[5:45]</span>
+                    <span class="c"># result = r.json()</span>
+
+                    <span class="c"># if v[&quot;patch_url&quot;]==&quot;&quot;or v[&quot;patch_url&quot;]==None:</span>
+                    <span class="c">#     print True</span>
+                    <span class="c"># print temp</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">number</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">pullrequest</span><span class="p">))</span>
+
+        <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="k">print</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="c"># # for data in result:</span>
+        <span class="c"># #     print data[0],data[1]</span>
+        <span class="c"># #</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newissuesdata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="p">[]:</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span>
+                    <span class="c"># print v[&quot;name&quot;]</span>
+                    <span class="n">key</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">key</span>
+
+        <span class="n">idset</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="n">idset</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">676</span><span class="p">:</span>
+                <span class="k">print</span> <span class="n">data</span>
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">idset</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">id</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">newissuesdata</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)]</span> <span class="o">=</span> <span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+        <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">newissuesdata</span><span class="p">)</span>
+        <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issuesinfocoll</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">newissuesdata</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="InteractionMongo.dealissues2"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.InteractionMongo.InteractionMongo.dealissues2">[文档]</a>    <span class="k">def</span> <span class="nf">dealissues2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;处理issue信息2&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newissuesdata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issuesinfocoll</span><span class="o">.</span><span class="n">find</span><span class="p">():</span>
+            <span class="k">print</span> <span class="n">data</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">([]):</span>
+                    <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;https&quot;</span><span class="p">):</span>
+                        <span class="k">print</span> <span class="n">v</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+                        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">pacth_headers</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;From&quot;</span><span class="p">):</span>
+                            <span class="n">pullrequest</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">45</span><span class="p">]</span>
+                            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="k">print</span> <span class="n">i</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">newissuesdata</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">pullrequest</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">print</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">newissuesdata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issuesinfo2coll</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">newissuesdata</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="InteractionMongo.readdealcomments"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.InteractionMongo.InteractionMongo.readdealcomments">[文档]</a>    <span class="k">def</span> <span class="nf">readdealcomments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;读取处理后的comment&#39;</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">commentsinfocoll</span><span class="o">.</span><span class="n">find</span><span class="p">():</span>
+            <span class="k">print</span> <span class="n">data</span>
+</div>
+<div class="viewcode-block" id="InteractionMongo.getlabelset"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.InteractionMongo.InteractionMongo.getlabelset">[文档]</a>    <span class="k">def</span> <span class="nf">getlabelset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;获得标签&#39;</span>
+        <span class="n">labelset</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issuesinfocoll</span><span class="o">.</span><span class="n">find</span><span class="p">():</span>
+            <span class="c"># print data</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">([]):</span>
+                    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">==</span> <span class="nb">type</span><span class="p">([]):</span>
+                        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+                            <span class="n">labelset</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">labelset</span>
+</div>
+<div class="viewcode-block" id="InteractionMongo.readdealissuesandcommits"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.InteractionMongo.InteractionMongo.readdealissuesandcommits">[文档]</a>    <span class="k">def</span> <span class="nf">readdealissuesandcommits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;读取处理后的issue和commit&#39;</span>
+        <span class="n">issueset1</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+        <span class="n">issueset2</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issuesinfocoll</span><span class="o">.</span><span class="n">find</span><span class="p">():</span>
+            <span class="c">## 所使用的策略1，根据标签bug读取</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">issueset1</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">([]):</span>
+                        <span class="k">if</span> <span class="s">&quot;bug&quot;</span> <span class="ow">in</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">or</span> <span class="s">&quot;Bug&quot;</span> <span class="ow">in</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+                            <span class="n">issueset1</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;fix&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="ow">or</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;fix&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="ow">or</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;bug&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                                                                     <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="ow">or</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+                            <span class="s">&quot;bug&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                            <span class="n">issueset2</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">issueshamap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issuesinfo2coll</span><span class="o">.</span><span class="n">find_one</span><span class="p">()</span>
+        <span class="n">shaissuemap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issuesinfo3coll</span><span class="o">.</span><span class="n">find_one</span><span class="p">()</span>
+
+        <span class="n">shashamap</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c">##issueshamap and shaissuemap</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">issueshamap</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">print</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">shaissuemap</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">print</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span>
+            <span class="n">shashamap</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">shashamap</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">issueshamap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;error&quot;</span>
+                <span class="k">pass</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">shashamap</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">print</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span>
+
+        <span class="n">issueset3</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">issueshamap</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">issueset4</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">shaissuemap</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">print</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span>
+            <span class="n">shashamap</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">issueset4</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;error&quot;</span>
+                <span class="k">pass</span>
+
+        <span class="k">print</span> <span class="n">issueset1</span>
+        <span class="k">print</span> <span class="n">issueset2</span>
+        <span class="k">print</span> <span class="n">issueset3</span>
+        <span class="k">print</span> <span class="n">issueset4</span>
+
+        <span class="c"># self.drawisuuesvenn(issueset1,issueset2,issueset3,issueset4)</span>
+        <span class="n">issueset</span> <span class="o">=</span> <span class="p">(</span><span class="n">issueset1</span> <span class="o">|</span> <span class="n">issueset2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">issueset3</span> <span class="o">|</span> <span class="n">issueset4</span><span class="p">)</span>
+        <span class="n">shaset</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+        <span class="k">for</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">issueset</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">issueshamap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">issue</span><span class="p">):</span>
+                <span class="n">shaset</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">issueshamap</span><span class="p">[</span><span class="n">issue</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">shaissuemap</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">([])</span> <span class="ow">and</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">shaset</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">shaset</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">shaset</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">getfixbugdiff</span><span class="p">(</span><span class="n">shaset</span><span class="p">)</span>
+        <span class="c">##复制文件</span>
+</div>
+<div class="viewcode-block" id="InteractionMongo.getfixbugdiff"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.InteractionMongo.InteractionMongo.getfixbugdiff">[文档]</a>    <span class="k">def</span> <span class="nf">getfixbugdiff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">set</span><span class="o">=</span><span class="nb">set</span><span class="p">([])):</span>
+        <span class="s">&#39;获得修复bug的不同&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bugissues</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="kn">import</span> <span class="nn">os</span>
+        <span class="n">list_dirs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffdirpath</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">list_dirs</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffdirpath2</span><span class="p">):</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffdirpath2</span><span class="p">)</span>
+                <span class="n">path2</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffdirpath2</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;.txt&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">path2</span><span class="p">)</span>
+            <span class="k">print</span> <span class="n">i</span>
+</div>
+<div class="viewcode-block" id="InteractionMongo.copyfile"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.InteractionMongo.InteractionMongo.copyfile">[文档]</a>    <span class="k">def</span> <span class="nf">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">srcpath</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">descpath</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">shutil</span><span class="o">,</span> <span class="nn">os</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="n">srcpath</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="n">descpath</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="InteractionMongo.drawisuuesvenn"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.InteractionMongo.InteractionMongo.drawisuuesvenn">[文档]</a>    <span class="k">def</span> <span class="nf">drawisuuesvenn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="o">=</span><span class="nb">set</span><span class="p">([]),</span> <span class="n">B</span><span class="o">=</span><span class="nb">set</span><span class="p">([]),</span> <span class="n">C</span><span class="o">=</span><span class="nb">set</span><span class="p">([]),</span> <span class="n">D</span><span class="o">=</span><span class="nb">set</span><span class="p">([])):</span>
+        <span class="s">&#39;绘制issue venn图&#39;</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+        <span class="kn">from</span> <span class="nn">matplotlib_venn</span> <span class="kn">import</span> <span class="n">venn3</span>
+        <span class="kn">from</span> <span class="nn">matplotlib_venn</span> <span class="kn">import</span> <span class="n">venn2</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">22</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+        <span class="n">venn3</span><span class="p">([</span><span class="n">A</span> <span class="o">|</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">],</span> <span class="p">[</span><span class="s">&quot;inlabel|title|body&quot;</span><span class="p">,</span> <span class="s">&quot;haspullrequest&quot;</span><span class="p">,</span> <span class="s">&quot;fromdifftxt&quot;</span><span class="p">])</span>
+        <span class="kn">import</span> <span class="nn">os</span>
+        <span class="n">savepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">picpath</span> <span class="o">+</span> <span class="s">&quot;Inlabel-title-body_haspullrequest_fromdifftxt&quot;</span> <span class="o">+</span> <span class="s">&quot;.png&quot;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">savepath</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">savepath</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; 版权所有 2017, lm1201.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

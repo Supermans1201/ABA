@@ -1,0 +1,866 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pygitthub.Analysis &mdash; CodeDoc 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CodeDoc 1.0 文档" href="../../index.html"/>
+        <link rel="up" title="模块代码" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> CodeDoc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="simple">
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CodeDoc</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">模块代码</a> &raquo;</li>
+        
+      <li>pygitthub.Analysis</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>pygitthub.Analysis 源代码</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python</span>
+<span class="c"># -*- coding: UTF-8 -*-</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="nb">reload</span><span class="p">(</span><span class="n">sys</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">setdefaultencoding</span><span class="p">(</span><span class="s">&#39;gbk&#39;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">pygitthub.GithubRepo</span> <span class="kn">import</span> <span class="n">GithubRepo</span>
+
+
+<div class="viewcode-block" id="Analysis"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Analysis.Analysis">[文档]</a><span class="k">class</span> <span class="nc">Analysis</span><span class="p">:</span>
+    <span class="s">&#39;分析文件组成和类型&#39;</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="s">&quot;codinguser&quot;</span><span class="p">,</span> <span class="n">repo</span><span class="o">=</span><span class="s">&quot;gnucash-android&quot;</span><span class="p">):</span>
+        <span class="s">&#39;初始化&#39;</span>
+        <span class="n">Analysis</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span> <span class="o">=</span> <span class="n">GithubRepo</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">repo</span><span class="o">=</span><span class="n">repo</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fenxiresult</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fenxifile</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filetypes</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;.java&quot;</span><span class="p">,</span> <span class="s">&quot;.xml&quot;</span><span class="p">,</span> <span class="s">&quot;.gradle&quot;</span><span class="p">,</span> <span class="s">&quot;.jar&quot;</span><span class="p">,</span> <span class="s">&quot;.so&quot;</span><span class="p">,</span> <span class="s">&quot;.aar&quot;</span><span class="p">,</span> <span class="s">&quot;png&quot;</span><span class="p">,</span> <span class="s">&quot;jpg&quot;</span><span class="p">,</span> <span class="s">&quot;.keystore&quot;</span><span class="p">,</span> <span class="s">&quot;.zip&quot;</span><span class="p">,</span> <span class="s">&quot;.rar&quot;</span><span class="p">,</span>
+                          <span class="s">&quot;.md&quot;</span><span class="p">,</span> <span class="s">&quot;.txt&quot;</span><span class="p">,</span> <span class="s">&quot;.bat&quot;</span><span class="p">,</span> <span class="s">&quot;.classpath&quot;</span><span class="p">,</span> <span class="s">&quot;.project&quot;</span><span class="p">,</span> <span class="s">&quot;.gitignore&quot;</span><span class="p">,</span> <span class="s">&quot;pro&quot;</span><span class="p">,</span> <span class="s">&quot;.properties&quot;</span><span class="p">,</span> <span class="s">&quot;yml&quot;</span><span class="p">,</span>
+                          <span class="s">&quot;gradlew&quot;</span><span class="p">,</span> <span class="s">&quot;.sh&quot;</span><span class="p">,</span> <span class="s">&quot;yaml&quot;</span><span class="p">,</span> <span class="s">&quot;CONTRIBUTORS&quot;</span><span class="p">,</span> <span class="s">&quot;LICENSE&quot;</span><span class="p">,</span> <span class="s">&quot;.gnucash&quot;</span><span class="p">,</span> <span class="s">&quot;other&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filetypesmap</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">javafilenamesmap</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmlfilenamesmap</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">theft</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">filetypes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filetypesmap</span><span class="p">[</span><span class="n">theft</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">others</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diffflist</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">rootdir</span><span class="p">,</span> <span class="s">&#39;diff_intent_text&#39;</span><span class="p">),</span> <span class="s">&#39;a&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Analysis.genHistogrampic"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Analysis.Analysis.genHistogrampic">[文档]</a>    <span class="k">def</span> <span class="nf">genHistogrampic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{},</span> <span class="n">xlabel</span><span class="o">=</span><span class="s">&quot;x&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s">&quot;y&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">u&quot;title&quot;</span><span class="p">):</span>
+        <span class="s">&#39;生成条形图&#39;</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s">&#39;font.sans-serif&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;SimHei&#39;</span><span class="p">]</span>  <span class="c"># 指定默认字体,解决中文显示问题</span>
+        <span class="n">n_groups</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">datavalue</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">22</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_groups</span><span class="p">)</span>
+        <span class="c"># bar_width = 0.35</span>
+        <span class="n">bar_width</span> <span class="o">=</span> <span class="mf">0.2</span>
+        <span class="n">opacity</span> <span class="o">=</span> <span class="mf">0.4</span>
+        <span class="n">error_config</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;ecolor&#39;</span><span class="p">:</span> <span class="s">&#39;0.3&#39;</span><span class="p">}</span>
+        <span class="n">rects1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">datavalue</span><span class="p">,</span> <span class="n">bar_width</span><span class="p">,</span>
+                         <span class="n">alpha</span><span class="o">=</span><span class="n">opacity</span><span class="p">,</span>
+                         <span class="n">color</span><span class="o">=</span><span class="s">&#39;b&#39;</span><span class="p">,</span>
+                         <span class="c"># yerr=std_men,</span>
+                         <span class="n">error_kw</span><span class="o">=</span><span class="n">error_config</span><span class="p">,</span>
+                         <span class="n">label</span><span class="o">=</span><span class="s">&#39;datavalue&#39;</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">autolabel</span><span class="p">(</span><span class="n">rects</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">rect</span> <span class="ow">in</span> <span class="n">rects</span><span class="p">:</span>
+                <span class="n">height</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">get_height</span><span class="p">()</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span> <span class="o">+</span> <span class="n">rect</span><span class="o">.</span><span class="n">get_width</span><span class="p">()</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.05</span> <span class="o">*</span> <span class="n">height</span><span class="p">,</span>
+                        <span class="s">&#39;</span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">int</span><span class="p">(</span><span class="n">height</span><span class="p">),</span> <span class="n">ha</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s">&#39;bottom&#39;</span><span class="p">)</span>
+
+        <span class="n">autolabel</span><span class="p">(</span><span class="n">rects1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="n">bar_width</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="n">savepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">picpath</span> <span class="o">+</span> <span class="n">title</span> <span class="o">+</span> <span class="s">&quot;.png&quot;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">savepath</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">savepath</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Analysis.genPiechartpic"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Analysis.Analysis.genPiechartpic">[文档]</a>    <span class="k">def</span> <span class="nf">genPiechartpic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{},</span> <span class="n">title</span><span class="o">=</span><span class="s">u&quot;&quot;</span><span class="p">):</span>
+        <span class="s">&#39;生成饼图&#39;</span>
+        <span class="c"># 调节图形大小，宽，高</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">19</span><span class="p">))</span>
+        <span class="c"># 定义饼状图的标签，标签是列表</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="c"># 每个标签占多大，会自动去算百分比</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="n">patches</span><span class="p">,</span> <span class="n">l_text</span><span class="p">,</span> <span class="n">p_text</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="n">sizes</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">labeldistance</span><span class="o">=</span><span class="mf">1.05</span><span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%3.1f%%</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                                          <span class="n">startangle</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">pctdistance</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">l_text</span><span class="p">:</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">set_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">p_text</span><span class="p">:</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">set_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s">&#39;equal&#39;</span><span class="p">)</span>
+        <span class="n">savepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">picpath</span> <span class="o">+</span> <span class="n">title</span> <span class="o">+</span> <span class="s">&quot;.png&quot;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">savepath</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">savepath</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Analysis.statisticsdifferentfiletype"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Analysis.Analysis.statisticsdifferentfiletype">[文档]</a>    <span class="k">def</span> <span class="nf">statisticsdifferentfiletype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;统计文件类型&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;统计文件类型...&quot;</span>
+        <span class="n">list_dirs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffdirpath</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">list_dirs</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">print</span> <span class="s">&quot;处理第&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;个&quot;</span><span class="p">,</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">getfiletypefromtxt</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">print</span> <span class="s">&quot;共处理&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;个文件&quot;</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">filetypesmap</span>
+        <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">others</span><span class="p">:</span>
+            <span class="k">print</span> <span class="n">o</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">genHistogrampic</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filetypesmap</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s">u&quot;文件类型&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s">u&quot;频率&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">u&quot;P_文件类型_频率柱状图&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">genPiechartpic</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filetypesmap</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">u&quot;P_文件类型_频率饼图&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Analysis.statisticsdifferentfilename"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Analysis.Analysis.statisticsdifferentfilename">[文档]</a>    <span class="k">def</span> <span class="nf">statisticsdifferentfilename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;统计文件名称&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;统计文件名称...&quot;</span>
+        <span class="n">list_dirs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffdirpath</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">list_dirs</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">print</span> <span class="s">&quot;处理第&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;个&quot;</span><span class="p">,</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">getfilenameromtxt</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">print</span> <span class="s">&quot;共处理&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;个文件&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">genPiechartpic</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">javafilenamesmap</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">u&quot;P_Java程序类型_文件频数饼图&quot;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">javafilenamesmap</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">javaresultreduceone</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">genPiechartpic</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">u&quot;P_Java程序类型_文件个数频数饼图&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">javaresultreducetwo</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">genPiechartpic</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">u&quot;P_Java程序类型_文件种类个数频数饼图&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">genPiechartpic</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xmlfilenamesmap</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">u&quot;P_Xml程序类型_文件频数饼图&quot;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xmlfilenamesmap</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmlresultreduceone</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">genPiechartpic</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">u&quot;P_xml程序类型_文件个数频数饼图&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmlresultreducetwo</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">genPiechartpic</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">u&quot;P_xml程序类型_文件个数频数饼图&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Analysis.javaresultreduceone"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Analysis.Analysis.javaresultreduceone">[文档]</a>    <span class="k">def</span> <span class="nf">javaresultreduceone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;java 结果 reduce 1&#39;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">jfv</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">javafilenamesmap</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Activity.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;activity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;activity&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Service.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;service&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;service&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Provider.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;provider&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;provider&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Fragment.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;fragment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;fragment&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;View.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;view&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;view&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Dialog.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;dialog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;dialog&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;EditText.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;edittext&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;edittext&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Button.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;button&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;button&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Keyboard.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;keyboard&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;keyboard&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Layout.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;layout&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;layout&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Adapter.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;adapter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;adapter&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Helper.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;helper&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;helper&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Handler.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;handler&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;handler&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Listener.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;listener&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;listener&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Test.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;CrawlingScript&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;CrawlingScript&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;other&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;other&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+                <span class="c"># print jfk, jfv</span>
+        <span class="k">return</span> <span class="n">result</span>
+</div>
+<div class="viewcode-block" id="Analysis.javaresultreducetwo"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Analysis.Analysis.javaresultreducetwo">[文档]</a>    <span class="k">def</span> <span class="nf">javaresultreducetwo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;java 结果 reduce 2&#39;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">jfk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">javafilenamesmap</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Activity.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;activity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;activity&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Service.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;service&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;service&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Provider.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;provider&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;provider&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Fragment.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;fragment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;fragment&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;View.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;view&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;view&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Dialog.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;dialog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;dialog&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;EditText.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;edittext&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;edittext&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Button.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;button&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;button&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Keyboard.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;keyboard&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;keyboard&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Layout.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;layout&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;layout&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Adapter.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;adapter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;adapter&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Helper.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;helper&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;helper&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Handler.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;handler&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;handler&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Listener.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;listener&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;listener&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Test.java&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;CrawlingScript&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;CrawlingScript&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;other&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;other&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">result</span>
+</div>
+<div class="viewcode-block" id="Analysis.xmlresultreduceone"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Analysis.Analysis.xmlresultreduceone">[文档]</a>    <span class="k">def</span> <span class="nf">xmlresultreduceone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;xml 结果 reduce1&#39;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">jfk</span><span class="p">,</span> <span class="n">jfv</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmlfilenamesmap</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">dealedjfk</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;strings&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;strings&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;strings&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;styles&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;styles&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;styles&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;dimens&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;dimens&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;dimens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;color&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;colors&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;arrays&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;arrays&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;arrays&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;pom.xml&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;pom&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;pom&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;AndroidManifest.xml&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;androidmanifest&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;androidmanifest&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;fragment&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;fragment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;fragment&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;dialog&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;dialog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;dialog&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;button&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;button&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;buttton&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;action&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;action&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;action&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;abs&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;abs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;abs&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;toolbar&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;toolbar&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;toolbar&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;header&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;header&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;header&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;list&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;list&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;spinner&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;spinner&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;spinner&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;themes&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;themes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;themes&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;flags&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;flags&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;flags&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;activity&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;activity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;activity&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;view&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;view&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;view&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;keyboard&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;keyboard&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;keyboard&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;menu&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;menu&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;menu&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;other&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;other&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jfv</span>
+                <span class="c"># print jfk,jfv</span>
+        <span class="k">return</span> <span class="n">result</span>
+</div>
+<div class="viewcode-block" id="Analysis.xmlresultreducetwo"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Analysis.Analysis.xmlresultreducetwo">[文档]</a>    <span class="k">def</span> <span class="nf">xmlresultreducetwo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;xml 结果 reduce2&#39;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">jfk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmlfilenamesmap</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">dealedjfk</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="n">jfk</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;strings&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;strings&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;strings&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;styles&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;styles&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;styles&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;dimens&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;dimens&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;dimens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;color&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;colors&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;arrays&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;arrays&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;arrays&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;pom.xml&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;pom&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;pom&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;AndroidManifest.xml&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;androidmanifest&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;androidmanifest&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;fragment&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;fragment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;fragment&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;dialog&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;dialog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;dialog&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;button&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;button&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;buttton&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;action&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;action&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;action&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;abs&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;abs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;abs&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;toolbar&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;toolbar&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;toolbar&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;header&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;header&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;header&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;list&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;list&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;spinner&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;spinner&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;spinner&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;themes&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;themes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;themes&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;flags&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;flags&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;flags&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;activity&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;activity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;activity&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;view&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;view&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;view&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;keyboard&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;keyboard&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;keyboard&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;menu&quot;</span><span class="p">,</span> <span class="n">dealedjfk</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;menu&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;menu&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">&quot;other&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;other&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">result</span>
+</div>
+<div class="viewcode-block" id="Analysis.getfiletypefromtxt"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Analysis.Analysis.getfiletypefromtxt">[文档]</a>    <span class="k">def</span> <span class="nf">getfiletypefromtxt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span>
+        <span class="s">&#39;从 txt中 得到文件类型&#39;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thedata</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="k">print</span> <span class="s">&quot;正在处理...:&quot;</span><span class="p">,</span> <span class="n">filepath</span>
+        <span class="k">while</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;Subject&quot;</span><span class="p">):</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="bp">True</span>
+
+            <span class="k">if</span> <span class="s">&quot;---</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">==</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;diff&quot;</span><span class="p">):</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="n">fn</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="c"># print fn</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">fn</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="n">fn</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">2</span><span class="p">:]:</span>
+                        <span class="n">ft</span> <span class="o">=</span> <span class="n">fn</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
+                        <span class="c"># print ft</span>
+                        <span class="k">for</span> <span class="n">td</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">thedata</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">td</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;.../&quot;</span><span class="p">):</span>
+                                <span class="n">tt</span> <span class="o">=</span> <span class="n">td</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">4</span><span class="p">:]</span>
+                                <span class="k">if</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">tt</span><span class="p">):</span>
+                                    <span class="n">td</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ft</span>
+                        <span class="n">infiletypes</span> <span class="o">=</span> <span class="bp">False</span>
+                        <span class="k">for</span> <span class="n">theft</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">filetypes</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">theft</span><span class="p">):</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">filetypesmap</span><span class="p">[</span><span class="n">theft</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                                <span class="n">infiletypes</span> <span class="o">=</span> <span class="bp">True</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">infiletypes</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">filetypesmap</span><span class="p">[</span><span class="s">&quot;other&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">others</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ft</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">print</span> <span class="s">&quot;except&quot;</span>
+                    <span class="kn">import</span> <span class="nn">time</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;(\s*)</span><span class="se">\\</span><span class="s">|(\s* )([0-9]+)(\+*\-*)&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                    <span class="n">temp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">|&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;+&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">thedata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Analysis.getfilenameromtxt"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Analysis.Analysis.getfilenameromtxt">[文档]</a>    <span class="k">def</span> <span class="nf">getfilenameromtxt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span>
+        <span class="s">&#39;从txt 获得 文件名字&#39;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thedata</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="k">print</span> <span class="s">&quot;正在处理...:&quot;</span><span class="p">,</span> <span class="n">filepath</span>
+        <span class="k">while</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;Subject&quot;</span><span class="p">):</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="bp">True</span>
+
+            <span class="k">if</span> <span class="s">&quot;---</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">==</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;diff&quot;</span><span class="p">):</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="n">fn</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="c"># print fn</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">fn</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="n">fn</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">2</span><span class="p">:]:</span>
+                        <span class="n">ft</span> <span class="o">=</span> <span class="n">fn</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
+
+                        <span class="c"># print ft</span>
+                        <span class="k">for</span> <span class="n">td</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">thedata</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">td</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;.../&quot;</span><span class="p">):</span>
+                                <span class="n">tt</span> <span class="o">=</span> <span class="n">td</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">4</span><span class="p">:]</span>
+                                <span class="k">if</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">tt</span><span class="p">):</span>
+                                    <span class="n">td</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ft</span>
+
+                        <span class="k">if</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;java&quot;</span><span class="p">):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">javafilenamesmap</span><span class="p">[</span><span class="n">ft</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">javafilenamesmap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ft</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                        <span class="k">if</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;xml&quot;</span><span class="p">):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">xmlfilenamesmap</span><span class="p">[</span><span class="n">ft</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmlfilenamesmap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ft</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">print</span> <span class="s">&quot;except&quot;</span>
+                    <span class="kn">import</span> <span class="nn">time</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;(\s*)</span><span class="se">\\</span><span class="s">|(\s* )([0-9]+)(\+*\-*)&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                    <span class="n">temp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">|&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;+&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">thedata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Analysis.gendiff"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Analysis.Analysis.gendiff">[文档]</a>    <span class="k">def</span> <span class="nf">gendiff</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;生成不同&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bugissues</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">list_dirs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffdirpath</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">list_dirs</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">diffflist</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">getinfofromtxt</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">print</span> <span class="n">i</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diffflist</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bugissues</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="p">[]:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">bugissues</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issuesinfo3coll</span>
+        <span class="n">coll</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bugissues</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Analysis.getinfofromtxt"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Analysis.Analysis.getinfofromtxt">[文档]</a>    <span class="k">def</span> <span class="nf">getinfofromtxt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span>
+        <span class="s">&#39;从txt获得信息&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diffdata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;change&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;create&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;delete&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;files&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;subject&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isFix</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="n">shaname</span> <span class="o">=</span> <span class="n">filepath</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffdirpath</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;.txt&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">shaname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bugissues</span><span class="p">[</span><span class="n">shaname</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+
+        <span class="n">isnotejava</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">isnotexml</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">diffname</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="n">tempdata</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">print</span> <span class="n">filepath</span>
+        <span class="k">while</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="s">&quot;Subject&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+
+                <span class="n">start</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;subject&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">diffdata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">diffname</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">diffdata</span><span class="p">[</span><span class="n">diffname</span><span class="p">]</span> <span class="o">=</span> <span class="n">tempdata</span>
+                    <span class="n">tempdata</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="c"># print &quot;*subject*&quot;,diffname,self.diffdata[diffname]</span>
+                    <span class="c">#</span>
+
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">u&quot;fix&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">isFix</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="c"># print line</span>
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;fix[0-9a-zA-Z\s]*#[0-9]+&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;fix[0-9a-zA-Z\s]*#[0-9]+&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                        <span class="n">tr</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">ch</span><span class="p">:</span> <span class="n">ch</span> <span class="ow">in</span> <span class="s">&#39;0123456789&#39;</span><span class="p">,</span> <span class="n">tr</span><span class="p">)</span>
+                        <span class="k">print</span> <span class="n">tr</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">bugissues</span><span class="p">[</span><span class="n">shaname</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tr</span><span class="p">)</span>
+                        <span class="c">#     print result</span>
+                        <span class="c">#     import time</span>
+                        <span class="c">#     time.sleep(10)</span>
+                        <span class="c"># # print line</span>
+
+            <span class="k">if</span> <span class="s">&quot;---</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">==</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;diff&quot;</span><span class="p">):</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="bp">False</span>
+
+                <span class="c"># 如果没有初值赋予初值</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">diffdata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">diffname</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">diffdata</span><span class="p">[</span><span class="n">diffname</span><span class="p">]</span> <span class="o">=</span> <span class="n">tempdata</span>
+                    <span class="n">tempdata</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="c"># print &quot;*diff*&quot;, diffname, tempdata, self.diffdata[diffname]</span>
+                <span class="c"># for k, v in self.diffdata.items():</span>
+                <span class="c">#     print &quot;diff&quot;,k, v</span>
+
+                <span class="n">fn</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="c"># print fn</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">fn</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="n">fn</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">2</span><span class="p">:]:</span>
+                        <span class="n">ft</span> <span class="o">=</span> <span class="n">fn</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
+                        <span class="c"># print ft</span>
+
+                        <span class="k">for</span> <span class="n">td</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;files&quot;</span><span class="p">]:</span>
+                            <span class="k">if</span> <span class="n">td</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;.../&quot;</span><span class="p">):</span>
+                                <span class="n">tt</span> <span class="o">=</span> <span class="n">td</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">4</span><span class="p">:]</span>
+                                <span class="k">if</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">tt</span><span class="p">):</span>
+                                    <span class="n">td</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ft</span>
+                        <span class="c"># print &quot;暂时注释掉，不要删除以后添加日志输出diff&quot;,ft</span>
+                        <span class="n">diff</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="n">diffname</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.java&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ft</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.xml&quot;</span><span class="p">):</span>
+                            <span class="n">start</span> <span class="o">=</span> <span class="bp">True</span>
+                        <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">diffflist</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ft</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+                            <span class="c"># print &quot;**&quot;,ft, tt</span>
+                            <span class="c"># print</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">print</span> <span class="s">&quot;td&quot;</span>
+                    <span class="kn">import</span> <span class="nn">time</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;@@(.*) @@&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                    <span class="n">diff</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">tempdata</span><span class="p">[</span><span class="n">diff</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;/\*&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                    <span class="n">isnotejava</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;//&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> \
+                        <span class="ow">and</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;http://&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;https://&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span>
+                                                                                   <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;file://&quot;</span><span class="p">,</span>
+                                                                                                           <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                    <span class="n">temp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;//&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span>
+                    <span class="n">temps</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+                    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">temp</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                        <span class="n">temps</span> <span class="o">+=</span> <span class="n">s</span>
+                    <span class="c"># print &quot;[&quot;,line,&quot;-&gt;&quot;,temps,&quot;]&quot;</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">temps</span>
+
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;&lt;!--&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                    <span class="n">isnotexml</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="c"># print line</span>
+                    <span class="k">pass</span>
+                <span class="k">if</span> <span class="n">isnotejava</span> <span class="ow">or</span> <span class="n">isnotexml</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;+&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;+++&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;---&quot;</span><span class="p">)):</span>
+                            <span class="n">newline</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&lt;&quot;</span><span class="p">,</span> <span class="s">&quot; &lt; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s">&quot; &gt; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;{&quot;</span><span class="p">,</span> <span class="s">&quot; { &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;}&quot;</span><span class="p">,</span>                                                                             <span class="s">&quot; } &quot;</span><span class="p">)</span> \
+                                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">,</span> <span class="s">&quot; , &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;!&quot;</span><span class="p">,</span> <span class="s">&quot; ! &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;+&quot;</span><span class="p">,</span> <span class="s">&quot;+ &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="p">,</span> <span class="s">&quot;- &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                                <span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">&quot;</span><span class="p">,</span>
+                                <span class="s">&quot; </span><span class="se">\&quot;</span><span class="s"> &quot;</span><span class="p">)</span> \
+                                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">,</span> <span class="s">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;(&quot;</span><span class="p">,</span> <span class="s">&quot; ( &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;)&quot;</span><span class="p">,</span> <span class="s">&quot; ) &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;;&quot;</span><span class="p">,</span> <span class="s">&quot; ; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                                <span class="s">&quot;=&quot;</span><span class="p">,</span>
+                                <span class="s">&quot; = &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                                <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;\s&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span> \
+                                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;   &quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;  &quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;|&quot;</span><span class="p">,</span> <span class="s">&quot; | &quot;</span><span class="p">)</span><span class="o">.</span> \
+                                <span class="n">replace</span><span class="p">(</span><span class="s">&quot;= =&quot;</span><span class="p">,</span> <span class="s">&quot;==&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                                <span class="s">&quot;! =&quot;</span><span class="p">,</span> <span class="s">&quot;!=&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;!  =&quot;</span><span class="p">,</span> <span class="s">&quot;!=&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&lt; =&quot;</span><span class="p">,</span> <span class="s">&quot;&lt;=&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&gt; =&quot;</span><span class="p">,</span> <span class="s">&quot;&gt;=&quot;</span><span class="p">)</span> \
+                                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;{ }&quot;</span><span class="p">,</span> <span class="s">&quot;{}&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;{  }&quot;</span><span class="p">,</span> <span class="s">&quot;{}&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;( )&quot;</span><span class="p">,</span> <span class="s">&quot;()&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;(  )&quot;</span><span class="p">,</span>
+                                                                                                         <span class="s">&quot;()&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                                <span class="s">&quot;* =&quot;</span><span class="p">,</span> <span class="s">&quot;*=&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;+ =&quot;</span><span class="p">,</span> <span class="s">&quot;+=&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;- =&quot;</span><span class="p">,</span> <span class="s">&quot;-=&quot;</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">diff</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;subject&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="ow">not</span> <span class="n">tempdata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">diff</span><span class="p">):</span>
+                                    <span class="n">tempdata</span><span class="p">[</span><span class="n">diff</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                                <span class="n">tempdata</span><span class="p">[</span><span class="n">diff</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newline</span><span class="p">)</span>
+                                <span class="c"># print tempdata</span>
+                                <span class="c"># print diff, tempdata[diff]</span>
+                                <span class="c"># print &quot;*&quot;, newline</span>
+                                <span class="c"># print newline</span>
+
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;\*/&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                    <span class="n">isnotejava</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;--&gt;&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                    <span class="n">isnotexml</span> <span class="o">=</span> <span class="bp">False</span>
+
+            <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;(\s*)</span><span class="se">\\</span><span class="s">|(\s* )([0-9]+)(\+*\-*)&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                    <span class="n">temp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">|&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;+&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;files&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+                            <span class="s">&quot;( files changed, )|(insertions</span><span class="se">\\</span><span class="s">(</span><span class="se">\\</span><span class="s">+</span><span class="se">\\</span><span class="s">),)|(deletions</span><span class="se">\\</span><span class="s">(-</span><span class="se">\\</span><span class="s">))|( file changed, )|(insertion</span><span class="se">\\</span><span class="s">(</span><span class="se">\\</span><span class="s">+</span><span class="se">\\</span><span class="s">),)|(deletion</span><span class="se">\\</span><span class="s">(-</span><span class="se">\\</span><span class="s">))&quot;</span><span class="p">,</span>
+                            <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                        <span class="c"># print line</span>
+                        <span class="n">fid</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;([0-9]+)&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+                        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">fid</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;([0-9]+)&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+                                <span class="n">fid</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fid</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;change&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fid</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;change&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fid</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;change&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fid</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fid</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;insertion&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;change&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fid</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;change&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fid</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+                            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;deletion&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">):</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;change&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fid</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;change&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fid</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                                <span class="c"># print fid</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">diffdata</span><span class="p">[</span><span class="n">diffname</span><span class="p">]</span> <span class="o">=</span> <span class="n">tempdata</span>
+
+        <span class="k">for</span> <span class="n">dn</span><span class="p">,</span> <span class="n">td</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">diffdata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">num</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">newtd</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">td</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span> <span class="o">==</span> <span class="p">[]:</span>
+                    <span class="n">num</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">newtd</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">)]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">diffdata</span><span class="p">[</span><span class="n">dn</span><span class="p">]</span> <span class="o">=</span> <span class="n">newtd</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">diffdata</span><span class="p">[</span><span class="n">dn</span><span class="p">]</span> <span class="o">==</span> <span class="p">{}:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">diffdata</span><span class="p">[</span><span class="n">dn</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;isfix&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">isFix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;change&quot;</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;create&quot;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;change&quot;</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;delete&quot;</span><span class="p">]))</span>
+        <span class="c"># print self.infodata[&quot;files&quot;]</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">[</span><span class="s">&quot;change&quot;</span><span class="p">]</span>
+        <span class="c"># print self.infodata[&quot;subject&quot;]</span>
+        <span class="c"># print self.diffdata</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="n">shaname</span><span class="p">,</span> <span class="s">&quot;info&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">infodata</span><span class="p">,</span> <span class="s">&quot;diff&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">diffdata</span><span class="p">}</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">openmongdb</span><span class="p">(</span><span class="n">collname</span><span class="o">=</span><span class="s">&quot;diffinfo&quot;</span><span class="p">)</span>
+        <span class="n">coll</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; 版权所有 2017, lm1201.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

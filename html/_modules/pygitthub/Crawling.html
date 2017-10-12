@@ -1,0 +1,443 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pygitthub.Crawling &mdash; CodeDoc 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CodeDoc 1.0 文档" href="../../index.html"/>
+        <link rel="up" title="模块代码" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> CodeDoc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="simple">
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CodeDoc</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">模块代码</a> &raquo;</li>
+        
+      <li>pygitthub.Crawling</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>pygitthub.Crawling 源代码</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python</span>
+<span class="c"># -*- coding: UTF-8 -*-</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">pygitthub.GithubRepo</span> <span class="kn">import</span> <span class="n">GithubRepo</span>
+
+<span class="s">&#39;爬取类&#39;</span>
+
+
+<div class="viewcode-block" id="Crawling"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Crawling.Crawling">[文档]</a><span class="k">class</span> <span class="nc">Crawling</span><span class="p">:</span>
+    <span class="s">&#39;爬取类&#39;</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="s">&quot;codinguser&quot;</span><span class="p">,</span> <span class="n">repo</span><span class="o">=</span><span class="s">&quot;gnucash-android&quot;</span><span class="p">):</span>
+        <span class="s">&#39;初始化爬取所需要的信息&#39;</span>
+        <span class="n">Crawling</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c"># 初始化 使用的项目 GithubRepo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span> <span class="o">=</span> <span class="n">GithubRepo</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">repo</span><span class="o">=</span><span class="n">repo</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">writeallissuesnumtxt</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">writeallcommitsshatxt</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allissuesnum</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allcommitsha</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="Crawling.genAllissuesnumtxt"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Crawling.Crawling.genAllissuesnumtxt">[文档]</a>    <span class="k">def</span> <span class="nf">genAllissuesnumtxt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;将所有的获取到的issue存入到文件&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;获取所有的issue 存入到&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">allissuesnumfilename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">getallissuenums</span><span class="p">()</span>
+        <span class="k">print</span> <span class="s">&quot;写入文件&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">allissuesnumfilename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">writeallissuesnumtxt</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">fileObject</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">allissuesnumfilepath</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allissuesnum</span><span class="p">:</span>
+            <span class="c"># print num</span>
+            <span class="n">fileObject</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">))</span>
+            <span class="n">fileObject</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="n">fileObject</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">writeallissuesnumtxt</span> <span class="o">=</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="Crawling.genAllcommitsshatxt"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Crawling.Crawling.genAllcommitsshatxt">[文档]</a>    <span class="k">def</span> <span class="nf">genAllcommitsshatxt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;将所有的获取到的commit sha存入到文件，后续根据此进一步获取&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;获取所有的commit sha存入到&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">allcommitshafilename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">getallcommitsha</span><span class="p">()</span>
+        <span class="k">print</span> <span class="s">&quot;写入文件&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">allcommitshafilename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">writeallcommitsshatxt</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">fileObject</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">allcommitshafilepath</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allcommitsha</span><span class="p">:</span>
+            <span class="c"># print num</span>
+            <span class="n">fileObject</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">))</span>
+            <span class="n">fileObject</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="n">fileObject</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">writeallcommitsshatxt</span> <span class="o">=</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="Crawling.genAllissuestomongodb"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Crawling.Crawling.genAllissuestomongodb">[文档]</a>    <span class="k">def</span> <span class="nf">genAllissuestomongodb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;根据上一步得到的文本，将获得的issue存入到数据库中&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;将所有issues存入到数据库中...&quot;</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issuescoll</span>
+
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;获取数据...&quot;</span><span class="p">,</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issues_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">rlink</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s">&#39;link&#39;</span><span class="p">]</span>
+            <span class="k">print</span> <span class="n">r</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="k">print</span> <span class="s">&quot;将issues &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">))</span> <span class="o">+</span> <span class="s">&quot;[&quot;</span><span class="p">,</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                <span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s">&#39;number&#39;</span><span class="p">]),</span>
+                <span class="n">coll</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">print</span> <span class="s">&quot;] 存入到数据库..&quot;</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getlink</span><span class="p">(</span><span class="n">rlink</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issues_url</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">break</span>
+</div>
+<div class="viewcode-block" id="Crawling.genAllcommentstomongodb"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Crawling.Crawling.genAllcommentstomongodb">[文档]</a>    <span class="k">def</span> <span class="nf">genAllcommentstomongodb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;根据上一步得到的文本，将获得的issue下的评论comment存入到数据库中&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;将所有comment存入到数据库中...&quot;</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">commentsoll</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">allissuesnumfilepath</span><span class="p">):</span>
+            <span class="k">print</span> <span class="s">&quot;检测到存在文件&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">allissuesnumfilename</span> <span class="o">+</span> <span class="s">&quot;...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">getallissuenumfromtxt</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">allissuesnum</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="s">&quot;重新获得allissuesnum&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">getallissuenums</span><span class="p">()</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allissuesnum</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;正在处理第&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;个issue...&quot;</span><span class="p">,</span> <span class="s">&quot;编号：&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getcommentdetil</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="n">num</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;该issue下无评论&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;将评论插入到数据库中..&quot;</span>
+            <span class="k">for</span> <span class="n">comment</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                <span class="n">comment</span><span class="p">[</span><span class="s">&quot;issue&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">num</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">coll</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">comment</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Crawling.genAllcommitstomongodb"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Crawling.Crawling.genAllcommitstomongodb">[文档]</a>    <span class="k">def</span> <span class="nf">genAllcommitstomongodb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;根据上一步得到的文本，将获得的commit存入到数据库中&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;将所有commit存入到数据库中...&quot;</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">commitscoll</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">allcommitshafilepath</span><span class="p">):</span>
+            <span class="k">print</span> <span class="s">&quot;检测到存在文件&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">allcommitshafilename</span> <span class="o">+</span> <span class="s">&quot;...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">getallcommitshafromtxt</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">allcommitsha</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="s">&quot;重新获得allcommitsha&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">getallcommitsha</span><span class="p">()</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">sha</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allcommitsha</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;正在处理第&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;个commit...&quot;</span><span class="p">,</span> <span class="s">&quot;编号：&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sha</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getcommitdetil</span><span class="p">(</span><span class="n">sha</span><span class="o">=</span><span class="n">sha</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">coll</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Crawling.genAllcommitsdiffpatch"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Crawling.Crawling.genAllcommitsdiffpatch">[文档]</a>    <span class="k">def</span> <span class="nf">genAllcommitsdiffpatch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;根据上一步得到的文本，将获得的commit中的diff存入到文本中，这是后续分析的基础&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;获取每次commit提交的不同...&quot;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">allcommitshafilepath</span><span class="p">):</span>
+            <span class="k">print</span> <span class="s">&quot;检测到存在文件&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">allcommitshafilename</span> <span class="o">+</span> <span class="s">&quot;...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">getallcommitshafromtxt</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">allcommitsha</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="s">&quot;重新获得allcommitsha&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">getallcommitsha</span><span class="p">()</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">sha</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allcommitsha</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;正在处理第&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;个commit...&quot;</span><span class="p">,</span> <span class="s">&quot;编号：&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sha</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getcommitpatchdetil</span><span class="p">(</span><span class="n">sha</span><span class="o">=</span><span class="n">sha</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="n">fileObject</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffdirpath</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">sha</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;.txt&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+            <span class="n">fileObject</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;ascii&#39;</span><span class="p">,</span> <span class="s">&#39;ignore&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;ascii&#39;</span><span class="p">))</span>
+            <span class="n">fileObject</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Crawling.getlink"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Crawling.Crawling.getlink">[文档]</a>    <span class="k">def</span> <span class="nf">getlink</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rlink</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;&lt;.*?&gt;&#39;</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">rlink</span><span class="p">)</span>
+        <span class="n">m2</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&#39;&lt;|&gt;&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">m</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">m2</span>
+</div>
+<div class="viewcode-block" id="Crawling.getallissuenumfromtxt"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Crawling.Crawling.getallissuenumfromtxt">[文档]</a>    <span class="k">def</span> <span class="nf">getallissuenumfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;从生成的txt文件中获得所有的issue 编号&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;从&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">allissuesnumfilename</span> <span class="o">+</span> <span class="s">&quot;获得issuesnum&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">allissuesnumfilepath</span><span class="p">)</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">line</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">allissuesnum</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Crawling.getallcommitshafromtxt"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Crawling.Crawling.getallcommitshafromtxt">[文档]</a>    <span class="k">def</span> <span class="nf">getallcommitshafromtxt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;从生成的txt文件中获得所有的commit 编号&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;从&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">allcommitshafilename</span> <span class="o">+</span> <span class="s">&quot;获得commitsha&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">allcommitshafilepath</span><span class="p">)</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">line</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">allcommitsha</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Crawling.getallissuenums"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Crawling.Crawling.getallissuenums">[文档]</a>    <span class="k">def</span> <span class="nf">getallissuenums</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;处理issue分页&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;分页处理中...&quot;</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">print</span> <span class="s">&quot;正在处理issues第&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;分页...&quot;</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issues_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="k">print</span> <span class="n">response</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issues_url</span>
+            <span class="n">rlink</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s">&#39;link&#39;</span><span class="p">]</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">allissuesnum</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s">&#39;number&#39;</span><span class="p">])</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getlink</span><span class="p">(</span><span class="n">rlink</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issues_url</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">print</span> <span class="s">&quot;处理完毕...&quot;</span>
+                <span class="k">break</span>
+        <span class="k">print</span> <span class="s">&quot;所有issues共&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;分页，共&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">allissuesnum</span><span class="p">))</span> <span class="o">+</span> <span class="s">&quot;个&quot;</span>
+</div>
+<div class="viewcode-block" id="Crawling.getallcommitsha"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Crawling.Crawling.getallcommitsha">[文档]</a>    <span class="k">def</span> <span class="nf">getallcommitsha</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&#39;处理commit分页&#39;</span>
+        <span class="k">print</span> <span class="s">&quot;分页处理中...&quot;</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">print</span> <span class="s">&quot;正在处理commits第&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;分页...&quot;</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">commits_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">rlink</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s">&#39;link&#39;</span><span class="p">]</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">allcommitsha</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s">&#39;sha&#39;</span><span class="p">])</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getlink</span><span class="p">(</span><span class="n">rlink</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">commits_url</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">print</span> <span class="s">&quot;处理完毕...&quot;</span>
+                <span class="k">break</span>
+        <span class="k">print</span> <span class="s">&quot;所有commits共&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;分页，共&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">allcommitsha</span><span class="p">))</span> <span class="o">+</span> <span class="s">&quot;个&quot;</span>
+</div>
+<div class="viewcode-block" id="Crawling.getcommentdetil"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Crawling.Crawling.getcommentdetil">[文档]</a>    <span class="k">def</span> <span class="nf">getcommentdetil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="s">&quot;42&quot;</span><span class="p">):</span>
+        <span class="s">&#39;获得具体评论&#39;</span>
+        <span class="n">comment_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">issues_url</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">num</span> <span class="o">+</span> <span class="s">&quot;/comments&quot;</span>
+        <span class="k">print</span> <span class="n">comment_url</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">comment_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&quot;获取结果：&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Crawling.getcommitdetil"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Crawling.Crawling.getcommitdetil">[文档]</a>    <span class="k">def</span> <span class="nf">getcommitdetil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sha</span><span class="o">=</span><span class="s">&quot;daf2e8ba4261d19b4b3c4eebee5a61773c86632b&quot;</span><span class="p">):</span>
+        <span class="s">&#39;获得具体提交&#39;</span>
+        <span class="n">commit_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">commits_url</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">sha</span>
+        <span class="k">print</span> <span class="n">commit_url</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">commit_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&quot;获取结果：&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Crawling.getcommitpatchdetil"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.Crawling.Crawling.getcommitpatchdetil">[文档]</a>    <span class="k">def</span> <span class="nf">getcommitpatchdetil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sha</span><span class="o">=</span><span class="s">&quot;daf2e8ba4261d19b4b3c4eebee5a61773c86632b&quot;</span><span class="p">):</span>
+        <span class="s">&#39;获得提交的差别&#39;</span>
+        <span class="n">commit_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">commits_url</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">sha</span>
+        <span class="k">print</span> <span class="n">commit_url</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">commit_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">pacth_headers</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&quot;获取结果：&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span></div></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; 版权所有 2017, lm1201.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

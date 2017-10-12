@@ -1,0 +1,81 @@
+pygitthub package
+=================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    pygitthub.AnalysisScript
+    pygitthub.CrawlingScript
+    pygitthub.IntercationMongoScript
+    pygitthub.ModeExtractionScript
+    pygitthub.ProcessingCorpusScript
+
+Submodules
+----------
+
+pygitthub.Analysis module
+-------------------------
+
+.. automodule:: pygitthub.Analysis
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.Crawling module
+-------------------------
+
+.. automodule:: pygitthub.Crawling
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.GithubRepo module
+---------------------------
+
+.. automodule:: pygitthub.GithubRepo
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.InteractionMongo module
+---------------------------------
+
+.. automodule:: pygitthub.InteractionMongo
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.ModeExtraction module
+-------------------------------
+
+.. automodule:: pygitthub.ModeExtraction
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.ProcessingCorpus module
+---------------------------------
+
+.. automodule:: pygitthub.ProcessingCorpus
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygitthub.helloworld module
+---------------------------
+
+.. automodule:: pygitthub.helloworld
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pygitthub
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,0 +1,7 @@
+pygithub_learn2.0
+=================
+
+.. toctree::
+   :maxdepth: 4
+
+   pygitthub

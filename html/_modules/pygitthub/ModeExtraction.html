@@ -1,0 +1,489 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pygitthub.ModeExtraction &mdash; CodeDoc 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CodeDoc 1.0 文档" href="../../index.html"/>
+        <link rel="up" title="模块代码" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> CodeDoc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="simple">
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CodeDoc</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">模块代码</a> &raquo;</li>
+        
+      <li>pygitthub.ModeExtraction</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>pygitthub.ModeExtraction 源代码</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python</span>
+<span class="c"># -*- coding: UTF-8 -*-</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pygitthub.GithubRepo</span> <span class="kn">import</span>  <span class="n">GithubRepo</span>
+<span class="kn">from</span> <span class="nn">gensim.models</span> <span class="kn">import</span> <span class="n">word2vec</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<div class="viewcode-block" id="ModeExtraction"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.ModeExtraction.ModeExtraction">[文档]</a><span class="k">class</span> <span class="nc">ModeExtraction</span><span class="p">:</span>
+    <span class="s">&#39;模式提取类&#39;</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="s">&quot;codinguser&quot;</span><span class="p">,</span> <span class="n">repo</span><span class="o">=</span><span class="s">&quot;gnucash-android&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pyg</span> <span class="o">=</span> <span class="n">GithubRepo</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">repo</span><span class="o">=</span><span class="n">repo</span><span class="p">)</span>
+        <span class="n">ModeExtraction</span><span class="o">.</span><span class="n">count</span><span class="o">+=</span><span class="mi">1</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffdirpath3</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffdirpath3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">difftextpredealfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffdirpath3</span><span class="p">,</span><span class="s">&quot;diffs5.txt&quot;</span><span class="p">),</span> <span class="s">&#39;a&#39;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">difftextpredealfile</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(asctime)s</span><span class="s"> : </span><span class="si">%(levelname)s</span><span class="s"> : </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allmodel</span> <span class="o">=</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">Word2Vec</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffmodelfilepath</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">javamodel</span> <span class="o">=</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">Word2Vec</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffmodeljavafilepath</span><span class="p">)</span>
+        <span class="c"># self.xmlmodel = word2vec.Word2Vec.load(self.pyg.diffmodelxmlfilepath)</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">shaset</span>
+        <span class="n">coll</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pyg</span><span class="o">.</span><span class="n">diffinfocoll</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">coll</span><span class="o">.</span><span class="n">find</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shaset</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s">&quot;diff&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">print</span> <span class="n">key</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">difftextpredealfile</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">key</span><span class="o">+</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;xml&quot;</span><span class="p">):</span>
+                        <span class="k">pass</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                            <span class="k">print</span> <span class="n">k</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">difftextpredealfile</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">20</span><span class="p">:</span>
+                                <span class="k">pass</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span>  <span class="bp">self</span><span class="o">.</span><span class="n">dealdiff</span><span class="p">(</span><span class="n">v</span><span class="p">)[</span><span class="mi">2</span><span class="p">][</span><span class="s">&quot;5&quot;</span><span class="p">]:</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">difftextpredealfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">)</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">difftextpredealfile</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">difftextpredealfile</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dealdiff</span><span class="p">(</span><span class="n">v</span><span class="p">)[</span><span class="mi">2</span><span class="p">][</span><span class="s">&quot;10&quot;</span><span class="p">]:</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">difftextpredealfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t\t</span><span class="s">&quot;</span><span class="p">)</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">difftextpredealfile</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">difftextpredealfile</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+                        <span class="c"># for vv in v:0</span>
+                        <span class="c">#     print vv</span>
+        <span class="c"># print coll.find_one()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">difftextpredealfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<div class="viewcode-block" id="ModeExtraction.dealdiff"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.ModeExtraction.ModeExtraction.dealdiff">[文档]</a>    <span class="k">def</span> <span class="nf">dealdiff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">v</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="n">add</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">delete</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">smailar0</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;0&quot;</span><span class="p">:[],</span><span class="s">&quot;5&quot;</span><span class="p">:[],</span><span class="s">&quot;10&quot;</span><span class="p">:[],</span><span class="s">&quot;15&quot;</span><span class="p">:[],</span><span class="s">&quot;20&quot;</span><span class="p">:[],</span><span class="s">&quot;other&quot;</span><span class="p">:[]}</span>
+        <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sentence</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;+&quot;</span><span class="p">):</span>
+                <span class="n">add</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sentence</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="p">):</span>
+                <span class="n">delete</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+        <span class="c"># print add</span>
+        <span class="c"># print delete</span>
+        <span class="k">if</span> <span class="n">add</span><span class="o">==</span><span class="p">[]:</span>
+            <span class="k">pass</span>
+            <span class="k">print</span> <span class="s">&quot;**role:delete**&quot;</span><span class="p">,</span>
+            <span class="k">print</span> <span class="n">delete</span>
+        <span class="k">if</span> <span class="n">delete</span><span class="o">==</span><span class="p">[]:</span>
+            <span class="k">pass</span>
+            <span class="k">print</span> <span class="s">&quot;**role:add**&quot;</span><span class="p">,</span>
+            <span class="c"># print add</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">add</span><span class="o">==</span><span class="p">[]</span> <span class="ow">and</span>  <span class="ow">not</span> <span class="n">delete</span><span class="o">==</span><span class="p">[]:</span>
+            <span class="c"># print add</span>
+            <span class="c"># print delete</span>
+            <span class="k">for</span> <span class="n">sa</span> <span class="ow">in</span> <span class="n">add</span><span class="p">:</span>
+                <span class="n">nsa</span><span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&lt;&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;}&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span> \
+                    <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;!&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span> \
+                    <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;(&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;)&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;;&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;=&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="s">&quot;@+&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;@&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span> \
+                    <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;\s&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;   &quot;</span><span class="p">,</span>
+                                                                                                       <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="s">&quot;  &quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span> \
+                    <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;{&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;}&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;(&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;)&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">sd</span> <span class="ow">in</span> <span class="n">delete</span><span class="p">:</span>
+                    <span class="n">nsd</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&lt;&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;}&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span> \
+                    <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;!&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span> \
+                    <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;(&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;)&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;;&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;=&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="s">&quot;@+&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;@&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span> \
+                    <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;\s&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;   &quot;</span><span class="p">,</span>
+                                                                                                       <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="s">&quot;  &quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span> \
+                    <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;{&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;}&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;(&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;)&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span>
+                    <span class="k">if</span>  <span class="bp">self</span><span class="o">.</span><span class="n">getsentencesmaliar</span><span class="p">(</span><span class="n">nsa</span><span class="p">,</span><span class="n">nsd</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                        <span class="n">smailar0</span><span class="p">[</span><span class="s">&quot;0&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">sa</span><span class="p">,</span><span class="n">sd</span><span class="p">))</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">getsentencesmaliar</span><span class="p">(</span><span class="n">nsa</span><span class="p">,</span><span class="n">nsd</span><span class="p">)</span><span class="o">&lt;=</span><span class="mi">5</span><span class="p">:</span>
+                        <span class="n">smailar0</span><span class="p">[</span><span class="s">&quot;5&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">sa</span><span class="p">,</span><span class="n">sd</span><span class="p">))</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">getsentencesmaliar</span><span class="p">(</span><span class="n">nsa</span><span class="p">,</span><span class="n">nsd</span><span class="p">)</span><span class="o">&lt;=</span><span class="mi">10</span><span class="p">:</span>
+                        <span class="n">smailar0</span><span class="p">[</span><span class="s">&quot;10&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">sa</span><span class="p">,</span><span class="n">sd</span><span class="p">))</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">getsentencesmaliar</span><span class="p">(</span><span class="n">nsa</span><span class="p">,</span> <span class="n">nsd</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">15</span><span class="p">:</span>
+                        <span class="n">smailar0</span><span class="p">[</span><span class="s">&quot;15&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">sa</span><span class="p">,</span><span class="n">sd</span><span class="p">))</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">getsentencesmaliar</span><span class="p">(</span><span class="n">nsa</span><span class="p">,</span> <span class="n">nsd</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">20</span><span class="p">:</span>
+                        <span class="n">smailar0</span><span class="p">[</span><span class="s">&quot;20&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">sa</span><span class="p">,</span><span class="n">sd</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">smailar0</span><span class="p">[</span><span class="s">&quot;other&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">sa</span><span class="p">,</span><span class="n">sd</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">add</span><span class="p">,</span><span class="n">delete</span><span class="p">,</span><span class="n">smailar0</span>
+
+</div>
+<div class="viewcode-block" id="ModeExtraction.getsentencesmaliar"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.ModeExtraction.ModeExtraction.getsentencesmaliar">[文档]</a>    <span class="k">def</span> <span class="nf">getsentencesmaliar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scenceA</span><span class="p">,</span><span class="n">scenceB</span><span class="p">):</span>
+        <span class="n">am</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">allmodel</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+        <span class="n">f1</span><span class="o">=</span><span class="n">scenceA</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">f2</span><span class="o">=</span><span class="n">scenceB</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">n1</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">scenceA</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="n">n2</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">scenceB</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="c"># 创建一个距离矩阵</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n1</span> <span class="o">*</span> <span class="n">n2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n2</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">t1</span><span class="o">=</span><span class="n">am</span><span class="o">.</span><span class="n">wv</span><span class="p">[</span><span class="n">f1</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="c"># print f1[i]</span>
+                    <span class="n">t1</span><span class="o">=</span><span class="n">am</span><span class="o">.</span><span class="n">wv</span><span class="p">[</span><span class="s">&quot;+&quot;</span><span class="p">]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">t2</span><span class="o">=</span><span class="n">am</span><span class="o">.</span><span class="n">wv</span><span class="p">[</span><span class="n">f2</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">t2</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">wv</span><span class="p">[</span><span class="s">&quot;-&quot;</span><span class="p">]</span>
+                <span class="n">dist</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">n2</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">euclid_dist</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">)</span><span class="o">+</span><span class="mf">0.01</span>
+
+        <span class="n">first_signature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n1</span><span class="p">)</span>
+        <span class="n">second_signature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n2</span><span class="p">)</span>
+        <span class="c"># print  &quot;*****&quot;, dist</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">emd</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span><span class="n">first_signature</span><span class="p">,</span> <span class="n">second_signature</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ModeExtraction.euclid_dist"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.ModeExtraction.ModeExtraction.euclid_dist">[文档]</a>    <span class="k">def</span> <span class="nf">euclid_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">feature1</span><span class="p">,</span> <span class="n">feature2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;计算欧氏距离&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature2</span><span class="p">):</span>
+            <span class="k">print</span> <span class="s">&quot;ERROR: calc euclid_dist: </span><span class="si">%d</span><span class="s"> &lt;=&gt; </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">feature1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature2</span><span class="p">))</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">feature1</span> <span class="o">-</span> <span class="n">feature2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="ModeExtraction.emd"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.ModeExtraction.ModeExtraction.emd">[文档]</a>    <span class="k">def</span> <span class="nf">emd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dist</span><span class="p">,</span> <span class="n">w1</span><span class="p">,</span> <span class="n">w2</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+        <span class="kn">import</span> <span class="nn">rpy2.robjects</span> <span class="kn">as</span> <span class="nn">robjects</span>
+        <span class="c"># 从R中导入lp.transport()</span>
+        <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;library&#39;</span><span class="p">](</span><span class="s">&#39;lpSolve&#39;</span><span class="p">)</span>
+        <span class="n">transport</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;lp.transport&#39;</span><span class="p">]</span>
+
+        <span class="sd">&quot;&quot;&quot;R的transport()函数用来计算EMD&quot;&quot;&quot;</span>
+        <span class="c"># transport()的参数</span>
+        <span class="n">costs</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;matrix&#39;</span><span class="p">](</span><span class="n">robjects</span><span class="o">.</span><span class="n">FloatVector</span><span class="p">(</span><span class="n">dist</span><span class="p">),</span>
+                                     <span class="n">nrow</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">w1</span><span class="p">),</span> <span class="n">ncol</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">w2</span><span class="p">),</span>
+                                     <span class="n">byrow</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">row_signs</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;&lt;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">w1</span><span class="p">)</span>
+        <span class="n">row_rhs</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">FloatVector</span><span class="p">(</span><span class="n">w1</span><span class="p">)</span>
+        <span class="n">col_signs</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;&gt;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">w2</span><span class="p">)</span>
+        <span class="n">col_rhs</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">FloatVector</span><span class="p">(</span><span class="n">w2</span><span class="p">)</span>
+
+        <span class="n">t</span> <span class="o">=</span> <span class="n">transport</span><span class="p">(</span><span class="n">costs</span><span class="p">,</span> <span class="s">&quot;min&quot;</span><span class="p">,</span> <span class="n">row_signs</span><span class="p">,</span> <span class="n">row_rhs</span><span class="p">,</span> <span class="n">col_signs</span><span class="p">,</span> <span class="n">col_rhs</span><span class="p">)</span>
+        <span class="n">flow</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">rx2</span><span class="p">(</span><span class="s">&#39;solution&#39;</span><span class="p">)</span>
+
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">w1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">w2</span><span class="p">))</span>
+        <span class="n">flow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">flow</span><span class="p">)</span>
+        <span class="n">work</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">flow</span> <span class="o">*</span> <span class="n">dist</span><span class="p">)</span>
+        <span class="c"># print &quot;***&quot;, (np.sum(flow)),work</span>
+
+        <span class="n">emd</span> <span class="o">=</span> <span class="p">(</span><span class="n">work</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="o">/</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">flow</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="mf">0.1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">emd</span>
+</div>
+<div class="viewcode-block" id="ModeExtraction.getsmailarword"><a class="viewcode-back" href="../../pygitthub.html#pygitthub.ModeExtraction.ModeExtraction.getsmailarword">[文档]</a>    <span class="k">def</span> <span class="nf">getsmailarword</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="o">=</span><span class="s">&quot;activity&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&quot;all&quot;</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="c"># class Role:</span>
+    <span class="c">#     def __init__(self, name=&quot;&quot;):</span>
+    <span class="c">#         self.name=name</span>
+    <span class="c"># class Gainian:</span>
+    <span class="c">#     def __init__(self):</span>
+    <span class="c">#         self.roleList = []</span>
+    <span class="c">#     def addrole(self,role=Moshitiqu.Role()):</span>
+    <span class="c">#         self.roleList.append(role)</span>
+</div>
+    <span class="n">shaset</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s">u&#39;df9a06e56d0100cb96f0c4dd4d09cf21d283be7a&#39;</span><span class="p">,</span> <span class="s">u&#39;47dcdaf8715ffaf90dbb0315f7aec7a282cb69c2&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;ab88399cf5b05f7ed5ce182dd77a32b4c60f0632&#39;</span><span class="p">,</span> <span class="s">u&#39;f4624eecb51f74ed0db496f4eda9bf76299b59f6&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;6c320cfca1ec671f0d31f42729db17ffb5b8f525&#39;</span><span class="p">,</span> <span class="s">u&#39;08e34b3c57f31bea8229a14dc26e936a3a5a5377&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;7a5085db333e35c7936cd0abba8c4098960cea93&#39;</span><span class="p">,</span> <span class="s">u&#39;48ee4b049f10f44e02c948d118f2bc023efeb3fb&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;42ce9b7f24751b8f18ba1b4707a149e9e3c3ac4f&#39;</span><span class="p">,</span> <span class="s">u&#39;0b29acd691a66fbf6c91a7fafbc487131cfcf2b6&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;f28239b55a1147ce540d735dad1bed1a3ee3b90b&#39;</span><span class="p">,</span> <span class="s">u&#39;885f10da2b34167dfc1909d97035b5130d812b95&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;a8357079eef4f0de4c8961309aac855b0f5aa3e2&#39;</span><span class="p">,</span> <span class="s">u&#39;56d37550baf148270c68356bb3e3acbe6145af34&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;87498fbd2d10e945e6ef93266df3d4ab8a50332c&#39;</span><span class="p">,</span> <span class="s">u&#39;1f64c6ca00cee2f4940d22dda8d41f25a9e0ecb2&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;7ee05a6773648447e0e593f767468482b7ac85ff&#39;</span><span class="p">,</span> <span class="s">u&#39;63d20ca96aa1f3030a5799b49d05617dda23d179&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;eb6ad5a3eb776899498fbe4a21f0740df20176af&#39;</span><span class="p">,</span> <span class="s">u&#39;07dc9568723f19ea9f3bec4a002d795adb683207&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;673774bb0b200ecd9fe81c4096f8f7579721602a&#39;</span><span class="p">,</span> <span class="s">u&#39;d5b873570a76809071211478f0c831f09ab07326&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;921b63a5689d32c8ecfd45e31c09eff52be266e5&#39;</span><span class="p">,</span> <span class="s">u&#39;470fa0faf5877432e7477e904a390f488c503c29&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;792b2da18dca17f7db26076d20ca531947ad2e69&#39;</span><span class="p">,</span> <span class="s">u&#39;4e95e9e0edab6c0a4659925b0b1776ac20b63e62&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;7bc13b39ca0cd0e06b527d72c22a3cc9862509e2&#39;</span><span class="p">,</span> <span class="s">u&#39;4b90852f7168fc0a893911941e542fd14d9efca0&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;9f2a57834fa89c997a8402798453c5dc7a17fdee&#39;</span><span class="p">,</span> <span class="s">u&#39;ad62cec2ac198bc2951e306ca05f754b51f9c357&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;ec673cc6ce109118578893d85ca93468d092565c&#39;</span><span class="p">,</span> <span class="s">u&#39;932c38034613f05a7e9dd42f8d58522a57de8d3c&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;b77f526fca4f7dac1e9aa1f0792612ef2d644d97&#39;</span><span class="p">,</span> <span class="s">u&#39;401c2d292c63c1f1575d91dafd0c281ceee7daea&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;777ead9c25dfdf8c35174980ba88320ee4bb25c3&#39;</span><span class="p">,</span> <span class="s">u&#39;92a5a82173329b2bedfeffd88c06fbb8aa2d28be&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;8413ef0a980293f4232e5d2b44f8ae416bdd0d7b&#39;</span><span class="p">,</span> <span class="s">u&#39;b43b5dd31da7f75f998360641dce5ce22c1d2a58&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;111d1c2d5d8e57bf26c10972a44befbbd481e062&#39;</span><span class="p">,</span> <span class="s">u&#39;255505b6b9a318c3a44ae6706af1e9dd256412f8&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;a1076dd9e4c471aba40e972a89189c4a46c398c2&#39;</span><span class="p">,</span> <span class="s">u&#39;97a1dca8b9bf3c03f88b03c4d45a69c759d751ef&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;0e111daeb608c73a178d93b669acae78dddc5ccc&#39;</span><span class="p">,</span> <span class="s">u&#39;e6b619db1d36df79e0aec042aac1bb14ef4b2a60&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;b522690da10fe1f7922ebad85df85f894f438891&#39;</span><span class="p">,</span> <span class="s">u&#39;9f1a68e737b755423a3164db700c1914d54e7e4f&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;957a41712f4b103e9ca3ff72bc8500b3dbf6d0a0&#39;</span><span class="p">,</span> <span class="s">u&#39;c08c98c4f4d9cfb4913b2bd8ac25bd75311572f4&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;48c8ca798e6929c974f6bff1cac706254099715b&#39;</span><span class="p">,</span> <span class="s">u&#39;ae6d8d48b4ee60eb99b9dca5ed3544bf574ae8ac&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;904f30137d4cd15319d4b292ee18347f5a327640&#39;</span><span class="p">,</span> <span class="s">u&#39;c07ee99165aa0024819e294607ed0efe9cb91c04&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;0aef6f5896d74221698feda72400000524ef2a93&#39;</span><span class="p">,</span> <span class="s">u&#39;896329da8306c13ec810c5678a4b3377c8aee215&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;8b867b52bd7758c265167c4cfb04f1039a814188&#39;</span><span class="p">,</span> <span class="s">u&#39;47729837723f6ba603c5c1f444799ded27069dd9&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;19a346bfd4886d7b4c252eb773aa307cb4256990&#39;</span><span class="p">,</span> <span class="s">u&#39;c9894bcc589eca048ce6b72dc18b9fe75047862f&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;28a3b14873a29c9d17fa85e0262cbfd8bd759faf&#39;</span><span class="p">,</span> <span class="s">u&#39;66cc5332e67e04cb6ce00c558237ea32a77bc627&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;62242ff79cb9d21ac08b8a2546e282fe674d1d61&#39;</span><span class="p">,</span> <span class="s">u&#39;e2e218194538ca389d6aef26dcfc1ba13a378434&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;516f719e82465104de35ff42b9f6b041d92bf392&#39;</span><span class="p">,</span> <span class="s">u&#39;6d625ac6f6a6673485bf037d05de40b83292a890&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;aed09ce8e706ce0a7ee1d7d058dcc8b53a9010aa&#39;</span><span class="p">,</span> <span class="s">u&#39;98e2674689d4a8a954be0b624c37d6776822dede&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;de6afbc1fedfde3455e7126dc368265fb4b7eed3&#39;</span><span class="p">,</span> <span class="s">u&#39;fd7007ef21c50b1fb3b24d06ac63173b02832f5f&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;dd78d159b72bf602114bbc5b695ba120064171ae&#39;</span><span class="p">,</span> <span class="s">u&#39;0415d936683f416a2bb778a949961defd0fbc12b&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;903a29e86f98bbea1be4780f83f7a9c1f55d0220&#39;</span><span class="p">,</span> <span class="s">u&#39;8afab48e943768243fd369ec8427bc8b94217ba3&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;6848f5189c35f5c82ce04c7f356fe74b1d1fc127&#39;</span><span class="p">,</span> <span class="s">u&#39;bcdab71c58f2ade300aa4cea23f0c9f728f26d88&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;9fbf0365dd1c5b2e16273adfdcaf1c9414f7145d&#39;</span><span class="p">,</span> <span class="s">u&#39;17f61876ba17849f41538bdc4438482037f1dca6&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;e95c6653ded13a9973f7bd7b2440e3f256f39694&#39;</span><span class="p">,</span> <span class="s">u&#39;d8b008740f659651714b9e3a0f997d62eae0f9b2&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;36accb0f547047d158c3a2cc7c7f851a0df87c65&#39;</span><span class="p">,</span> <span class="s">u&#39;d3e9dcee9fe857c7f385427120ba8921a448138a&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;cee56006d970d1be24c3c3c9bf7b43c33d980a31&#39;</span><span class="p">,</span> <span class="s">u&#39;9adaf901408e18a1390447bcab211b1a55989bf4&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;7ae602de8467e9cdd5ecdcd43e4c447c8ef713ee&#39;</span><span class="p">,</span> <span class="s">u&#39;13ef64a5bd2be9ec0b3923c90a209d6a46745df1&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;8daaf0066e2ed72fcfa54146be5d72247cbd0b97&#39;</span><span class="p">,</span> <span class="s">u&#39;739cb7bf43d26216fe1b66d7f63dc5c6637d36d5&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;24555f0f2809b23b2fa549511b44cfaa88539056&#39;</span><span class="p">,</span> <span class="s">u&#39;17b4b8b2e22bb5d7cbda3b1745bbcf1407f1b10f&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;dd6052dbdb11aac363892780d6d6970c885750a3&#39;</span><span class="p">,</span> <span class="s">u&#39;18a35b5efddd06f9f1de3f5ddd976ea9090e1274&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;bb9637f97c3d81e6b5507ab7b042e47dbfa898eb&#39;</span><span class="p">,</span> <span class="s">u&#39;bc718bc214f2ce4a5f66bbf6528bca8422822e02&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;c5814082cfc0205102b418b2866f30e20337dc42&#39;</span><span class="p">,</span> <span class="s">u&#39;8a61607a0da2abd7829c9b4e61a50f1289b2193d&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;a54558220014c899ff09121c1a79fae1c2a13aa0&#39;</span><span class="p">,</span> <span class="s">u&#39;3a232c0151a89a9f18b0383e545830fb7533abd6&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;6dd3dc944fb7f0ebb106475cadc5ab89cd4750ca&#39;</span><span class="p">,</span> <span class="s">u&#39;7e8010fca36d1101a6c60779961af0c06a0fecb7&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;945fd36b6239a1fe01526d91797c37d36e700092&#39;</span><span class="p">,</span> <span class="s">u&#39;498bf48ba61cba71b0a88d7615f613d802494c6c&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;e50124623962b31959df3fdaaa5fbe8f42e45b7e&#39;</span><span class="p">,</span> <span class="s">u&#39;5d6e801f6b24e55833adc76af43db927d7d86003&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;5911aa6dba047b29cef535bc401002da2512171b&#39;</span><span class="p">,</span> <span class="s">u&#39;42817b593849fdb1853d724337c33836200d1e8e&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;969da1a5b521bf0d8feea3881e705f2f81d5c10d&#39;</span><span class="p">,</span> <span class="s">u&#39;4a587640a54089ee36433c0ecea15b6e29a4c89b&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;2d76e1f00ddd684179f4b97b54340eccb63a6daa&#39;</span><span class="p">,</span> <span class="s">u&#39;1794882757a37c108c4b4cf40f6876aa7a51c87d&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;e00b20a4b933b2752c1d7468bf444395fe543c24&#39;</span><span class="p">,</span> <span class="s">u&#39;dac7a311ca38b7dc4f0d5084aaeeed4b81e618a7&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;d88c6c88c3e66486e9bc822be18cda0feb5f3066&#39;</span><span class="p">,</span> <span class="s">u&#39;1cae0a3fa57040b2a8a43ee14c4956ab0abbadab&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;40d759d595cd33d11dd8d6eca1bc447ec1290b60&#39;</span><span class="p">,</span> <span class="s">u&#39;6c4139e92639ae0ce7fb8f4d3a1112ef8a741db1&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;4ee9bce2280feee0cf33eec9577ece86da8c135d&#39;</span><span class="p">,</span> <span class="s">u&#39;96ae1d10d3dd35bd3e112e7ccc49b3d05597a5ad&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;1617d80aff45d2da5ef502a0ba06bd109d5c06f6&#39;</span><span class="p">,</span> <span class="s">u&#39;df48830e1b84a7bbcc8f040753f98d9ba6462e1c&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;d0c6f542b0ebb194b447ccb818fc571111a945ec&#39;</span><span class="p">,</span> <span class="s">u&#39;9300844620b4ac84636a92a73ca8f8119f6c8bb5&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;05ea0582cd8aded5c5a912ccb52c83540ff51136&#39;</span><span class="p">,</span> <span class="s">u&#39;4a34625499862ce17b29c02e26a3e3a8296037f0&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;b3187d6d5edaa2aef2a4e4f499cc5d179cf3e014&#39;</span><span class="p">,</span> <span class="s">u&#39;041c4a3904ca6424ee07a62375ac14b7731e4b82&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;710c2a95c813b4f4b14f3daac7dafe9864597e78&#39;</span><span class="p">,</span> <span class="s">u&#39;a74311a1cf6b2697d4511c5b8168944b451c95b6&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;fd2c7a6f9a4f7f1c0a440955954e2eb143f87575&#39;</span><span class="p">,</span> <span class="s">u&#39;77d9323bd5cb4a1fb40fb9a894943a9e9d7a73c4&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;4d754cf4e06ccb7d32a5da06fc259c8944dca9d7&#39;</span><span class="p">,</span> <span class="s">u&#39;7416cd376ab2183d61b63e73134c7841bd93cb6f&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;7e31d1a4e95667adb9a6e834a4e2cba7db9ce162&#39;</span><span class="p">,</span> <span class="s">u&#39;46859ae6e64f39a6207c1074ba309db85ff8fe30&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;6915fd516ee884b0ecb13cb83c4e937c345e5160&#39;</span><span class="p">,</span> <span class="s">u&#39;fa02d8ea9a16e97ae716dde03406be6727ce0b82&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;f5e8cac3548e26caa463860a1eb96ebf3aa33087&#39;</span><span class="p">,</span> <span class="s">u&#39;a003d519d5647be31786f4e6b46d0399fc7bbf2a&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;ade07dd6339597d8f1b4358710ae52afbb61d35e&#39;</span><span class="p">,</span> <span class="s">u&#39;c58e4bb2f5329aec00e283c97250ed6bcb774ad7&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;cefbbb5603416fafbea70fe3ebb9cd0a688dc7d8&#39;</span><span class="p">,</span> <span class="s">u&#39;893bd1a9cb89671fa312414d2d36a4ec04d5a1d1&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;e5daf4bf0b3fc7ab2897a06b87fed8366b2db353&#39;</span><span class="p">,</span> <span class="s">u&#39;8ecc38bc65d17ba87b18691a4f9e816615f33032&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;c13a94c2b3c10893452200bbb630e15821281725&#39;</span><span class="p">,</span> <span class="s">u&#39;96a204564147d54ca0b2ec8b393fb5c3aa33c5d1&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;123afcb7a1bd74e599342089f7f8b57568cdd4e9&#39;</span><span class="p">,</span> <span class="s">u&#39;d6310a65def44f8a1249a339a874da25b3c05836&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;a6aa211734accf94664da91316cf6e26bed0de92&#39;</span><span class="p">,</span> <span class="s">u&#39;7b345af652ff83ae3c793438b500b314681fb5d1&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;4893e8e45dfe980eb51710479a140df629dc9884&#39;</span><span class="p">,</span> <span class="s">u&#39;89f2ff570abd6702782c78af157c9926f6950344&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;5d4e0fb47cac2080ebfe220f12a7684c30e57a59&#39;</span><span class="p">,</span> <span class="s">u&#39;d9c3605822a214b98f715bb5a7ba100abad5d8ed&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;f1281e6e9285ff390074cf7064476da673f222ad&#39;</span><span class="p">,</span> <span class="s">u&#39;ce50ee116f18a373f30cb135ee48b5ad6c187db0&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;52f72970eada423f10ed11359f628c5755545b24&#39;</span><span class="p">,</span> <span class="s">u&#39;f9b3a301af6b1a10e146a6a412efdb9f295db152&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;2894466858715e5583932ff4751aa1c6eb5d2dde&#39;</span><span class="p">,</span> <span class="s">u&#39;ec23d695d2c0d5d500bf9057dc260299adfbf61d&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;daf2e8ba4261d19b4b3c4eebee5a61773c86632b&#39;</span><span class="p">,</span> <span class="s">u&#39;589e74fdc3014d73091ed1a3ebecb0c2e16257aa&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;0f121edb68f2f04e957bc9433e7531140a0bbe16&#39;</span><span class="p">,</span> <span class="s">u&#39;54cfecd61ce4cf4feaf78c0de1b747ed454c7beb&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;eaeb5a3bafcecc798540830e1ed293fa37fb8565&#39;</span><span class="p">,</span> <span class="s">u&#39;95fc7786ab5b85bae3fcb66cd3c68bc9c9497e81&#39;</span><span class="p">,</span>
+                  <span class="s">u&#39;5e05e52dc7f16025d6753a85489af53f8cc4a007&#39;</span><span class="p">])</span>
+</pre></div></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; 版权所有 2017, lm1201.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
