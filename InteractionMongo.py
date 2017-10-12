@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from pymongo import MongoClient
-import requests
-from pygitthub.GithubRepo import GithubRepo
 import re
+
+import requests
+
+from GithubRepo import GithubRepo
 
 
 class InteractionMongo:
@@ -326,14 +327,13 @@ class InteractionMongo:
             print i
 
     def copyfile(self, srcpath="", descpath=""):
-        import shutil, os
+        import shutil
         shutil.copyfile(src=srcpath, dst=descpath)
 
     def drawisuuesvenn(self, A=set([]), B=set([]), C=set([]), D=set([])):
         '绘制issue venn图'
         import matplotlib.pyplot as plt
         from matplotlib_venn import venn3
-        from matplotlib_venn import venn2
         plt.figure(figsize=(22, 10))
         venn3([A | B, C, D], ["inlabel|title|body", "haspullrequest", "fromdifftxt"])
         import os

@@ -1,11 +1,13 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
+import logging
 import os
 import re
-from gensim.models import word2vec
+
 import gensim.corpora
-import logging
-from pygitthub.GithubRepo import GithubRepo
+from gensim.models import word2vec
+
+from GithubRepo import GithubRepo
 
 
 class ProcessingCorpus:
@@ -136,7 +138,6 @@ class ProcessingCorpus:
 
         import networkx as nx
         import matplotlib.pyplot as plt
-        from pylab import mpl
         G = nx.Graph()
         blacknode = set([])
 

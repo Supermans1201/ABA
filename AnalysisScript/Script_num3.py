@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from pygitthub.Analysis import  Analysis
+from Analysis import  Analysis
 
 if __name__=="__main__":
     '生成diff信息存入到数据库中'

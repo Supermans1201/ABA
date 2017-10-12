@@ -1,4 +1,4 @@
-from pygitthub.ModeExtraction import ModeExtraction
+from ModeExtraction import ModeExtraction
 
 if __name__=="__main__":
     a= ModeExtraction()

@@ -1,12 +1,12 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-import re
+import logging
 import os
 
 import numpy as np
-from pygitthub.GithubRepo import  GithubRepo
 from gensim.models import word2vec
-import logging
+
+from GithubRepo import  GithubRepo
 
 class ModeExtraction:
     '模式提取类'

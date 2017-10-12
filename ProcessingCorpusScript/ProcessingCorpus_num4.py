@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from pygitthub.ProcessingCorpus import  ProcessingCorpus
+from ProcessingCorpus import  ProcessingCorpus
 if __name__=="__main__":
     '生成词向量模型'
     e=ProcessingCorpus()

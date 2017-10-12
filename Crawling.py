@@ -4,7 +4,7 @@ import requests
 import os
 import re
 
-from pygitthub.GithubRepo import GithubRepo
+from GithubRepo import GithubRepo
 
 '爬取类'
 

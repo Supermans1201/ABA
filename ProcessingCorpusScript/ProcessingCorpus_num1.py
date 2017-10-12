@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from pygitthub.ProcessingCorpus import  ProcessingCorpus
-import time
+from ProcessingCorpus import  ProcessingCorpus
+
 if __name__=="__main__":
     '清洗文本'
     e=ProcessingCorpus()

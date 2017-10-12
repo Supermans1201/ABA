@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from pygitthub.Crawling import Crawling
+from Crawling import Crawling
 
 if __name__=="__main__":
     '将所有的commot存入到数据库中'

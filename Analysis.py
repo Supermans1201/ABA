@@ -11,7 +11,7 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-from pygitthub.GithubRepo import GithubRepo
+from GithubRepo import GithubRepo
 
 
 class Analysis:

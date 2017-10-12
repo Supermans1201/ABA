@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from pygitthub.ProcessingCorpus import  ProcessingCorpus
+from ProcessingCorpus import  ProcessingCorpus
 if __name__=="__":
     '生成diff的图片'
     e=ProcessingCorpus()
