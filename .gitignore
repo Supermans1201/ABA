@@ -1,6 +1,8 @@
 *.pyc
-codinguser_gnucash-android
+data
 .git
 .idea
 .rar
 .zip
+GetToken/jdk_docs_html
+GetToken/sdk_docs_html
